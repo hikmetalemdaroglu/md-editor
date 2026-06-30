@@ -1,5 +1,7 @@
 use std::io::Write;
 use std::path::Path;
+use std::path::PathBuf;
+use tauri::Manager;
 
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct ImportEntry {
@@ -73,6 +75,27 @@ fn fn_export_zip(notes: Vec<ExportNote>, save_path: String) -> Result<(), String
     Ok(())
 }
 
+fn fn_get_config_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
+    let config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&config_dir).map_err(|e| e.to_string())?;
+    Ok(config_dir.join("md-editor.ini"))
+}
+
+#[tauri::command]
+fn fn_read_config(app: tauri::AppHandle) -> Result<String, String> {
+    let config_path = fn_get_config_path(&app)?;
+    if !config_path.exists() {
+        return Ok("[Settings]\nMode=viewer\n".to_string());
+    }
+    std::fs::read_to_string(&config_path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn fn_write_config(app: tauri::AppHandle, content: String) -> Result<(), String> {
+    let config_path = fn_get_config_path(&app)?;
+    std::fs::write(&config_path, &content).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -82,6 +105,8 @@ pub fn run() {
             fn_write_file,
             fn_import_folder,
             fn_export_zip,
+            fn_read_config,
+            fn_write_config,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

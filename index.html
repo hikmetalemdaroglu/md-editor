@@ -235,6 +235,13 @@
         #preview hr { border: 0; border-top: 1px solid var(--hr-color); margin: 1em 0; }
         #preview a { color: var(--link-color); }
 
+        /* Viewer Mode Styles */
+        body.viewer-mode #editor { background-color: var(--preview-bg); color: var(--text-color); cursor: default; }
+        body.viewer-mode #editorToolbar { opacity: 0.5; pointer-events: none; }
+        body.viewer-mode #statusBar { opacity: 0.6; }
+        #modeIndicator { display: none; position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); padding: 4px 16px; background: var(--tag-active-bg); color: #fff; border-radius: 12px; font-size: 12px; z-index: 999; opacity: 0.9; pointer-events: none; }
+        body.viewer-mode #modeIndicator { display: block; }
+
         /* --- Search Results Overlay --- */
         #searchResults { position: absolute; top: 50px; /* Position below controls */ left: 50%; transform: translateX(-50%); /* Center horizontally */ width: 80%; max-width: 700px; max-height: 70vh; /* Limit height */ overflow-y: auto; background-color: rgba(var(--preview-bg-rgb, 255, 255, 255), 0.98); /* Slightly transparent background */ border: 1px solid var(--button-border); border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 20px; z-index: 1000; /* Ensure it's on top */ display: none; /* Hidden by default */ font-size: 14px; color: var(--text-color); }
         #searchCloseBtn { position: absolute; top: 5px; right: 10px; font-size: 24px; font-weight: bold; color: var(--icon-color); cursor: pointer; border: none; background: none; padding: 0 5px; }
@@ -278,7 +285,12 @@
         <label for="searchInput">Search:</label>
         <input type="search" id="searchInput" placeholder="Search content..."> <!-- Input for searching note content -->
         <button id="searchBtn">Go</button> <!-- Button to trigger search -->
-        <button id="themeToggleBtn" title="Toggle Light/Dark Theme">🎨</button> <!-- Theme toggle button -->
+        <label for="modeSwitcher" style="margin-left: auto;">Mode:</label>
+        <select id="modeSwitcher" title="Switch Editor/Viewer Mode">
+            <option value="editor">Editor</option>
+            <option value="viewer">Viewer</option>
+        </select>
+        <button id="themeToggleBtn" title="Toggle Light/Dark Theme">🎨</button>
     </div>
 
     <!-- Main Application Area: Contains Sidebar and Main Content Side-by-Side -->
@@ -369,6 +381,8 @@
         <div id="searchResultsContent"></div> <!-- Search results will be rendered here -->
     </div>
 
+    <div id="modeIndicator">Viewer Mode</div>
+
     <script type="module">
         import { invoke } from '@tauri-apps/api/core';
         import { open, save, message, ask } from '@tauri-apps/plugin-dialog';
@@ -418,6 +432,7 @@
         const replaceAllBtn = document.getElementById('replaceAllBtn'); // Replace all button
         const findMatchCount = document.getElementById('findMatchCount'); // Span to show match count (e.g., 1/5)
         const findReplaceCloseBtn = document.getElementById('findReplaceCloseBtn'); // Close button for find bar
+        const modeSwitcher = document.getElementById('modeSwitcher'); // Editor/Viewer mode dropdown
 
 
         // --- State Variables ---
@@ -433,6 +448,7 @@
         let currentSortOrder = 'modified-desc'; // Default sort order for the sidebar note list
         let activeFilterTag = null; // Stores the tag currently used for filtering the sidebar list, or null if no filter
         let currentTheme = 'light'; // Tracks the current theme ('light' or 'dark')
+        let currentMode = 'viewer'; // Tracks Editor/Viewer mode ('editor' or 'viewer')
         let autoSaveTimer = null; // Timer ID for debouncing auto-save to localStorage
 
 
@@ -1270,6 +1286,49 @@
             } catch (e) {
                 console.error("Error exporting zip:", e);
                 alert("Error exporting zip: " + e);
+            }
+        }
+
+        // --- Mode (Editor/Viewer) Logic ---
+
+        function applyMode(mode) {
+            currentMode = mode;
+            modeSwitcher.value = mode;
+            if (mode === 'viewer') {
+                editor.readOnly = true;
+                document.body.classList.add('viewer-mode');
+            } else {
+                editor.readOnly = false;
+                document.body.classList.remove('viewer-mode');
+            }
+        }
+
+        function parseIniMode(content) {
+            const match = content.match(/^Mode=(\w+)/m);
+            if (match) {
+                const val = match[1].toLowerCase();
+                return val === 'editor' ? 'editor' : 'viewer';
+            }
+            return 'viewer';
+        }
+
+        async function loadAndApplyMode() {
+            try {
+                const configContent = await invoke('fn_read_config');
+                const mode = parseIniMode(configContent);
+                applyMode(mode);
+            } catch (e) {
+                console.error("Error loading config:", e);
+                applyMode('viewer');
+            }
+        }
+
+        async function saveModeToConfig(mode) {
+            try {
+                const content = `[Settings]\nMode=${mode}\n`;
+                await invoke('fn_write_config', { content });
+            } catch (e) {
+                console.error("Error saving config:", e);
             }
         }
 
@@ -2293,6 +2352,13 @@
         themeToggleBtnMenu.addEventListener('click', toggleTheme);
 
 
+        // Mode Switcher Event
+        modeSwitcher.addEventListener('change', () => {
+            const mode = modeSwitcher.value;
+            applyMode(mode);
+            saveModeToConfig(mode);
+        });
+
         // Theme Toggle Button (in controls)
         themeToggleBtn.addEventListener('click', toggleTheme);
 
@@ -2336,6 +2402,9 @@
         // --- Initial Setup ---
         // Load previous state from localStorage when the application starts
         loadStateFromLocalStorage();
+
+        // Load Editor/Viewer mode from config file
+        loadAndApplyMode();
 
         // Initial UI rendering and preview update happens inside loadStateFromLocalStorage
         // or its fallback initial note creation.
