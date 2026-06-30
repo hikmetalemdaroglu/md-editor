@@ -236,9 +236,12 @@
         #preview a { color: var(--link-color); }
 
         /* Viewer Mode Styles */
-        body.viewer-mode #editor { background-color: var(--preview-bg); color: var(--text-color); cursor: default; }
-        body.viewer-mode #editorToolbar { opacity: 0.5; pointer-events: none; }
-        body.viewer-mode #statusBar { opacity: 0.6; }
+        body.viewer-mode #editorContainer { display: none; }
+        body.viewer-mode #resizer { display: none; }
+        body.viewer-mode #editorToolbar { display: none; }
+        body.viewer-mode #findReplaceBar { display: none !important; }
+        body.viewer-mode .container { display: block; }
+        body.viewer-mode #preview { height: 100%; }
         #modeIndicator { display: none; position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); padding: 4px 16px; background: var(--tag-active-bg); color: #fff; border-radius: 12px; font-size: 12px; z-index: 999; opacity: 0.9; pointer-events: none; }
         body.viewer-mode #modeIndicator { display: block; }
 
@@ -386,6 +389,7 @@
     <script type="module">
         import { invoke } from '@tauri-apps/api/core';
         import { open, save, message, ask } from '@tauri-apps/plugin-dialog';
+        import { getCurrentWindow } from '@tauri-apps/api/window';
         // --- DOM References ---
         // Get references to all the important HTML elements to interact with them in JS
         const editor = document.getElementById('editor');
@@ -1291,15 +1295,30 @@
 
         // --- Mode (Editor/Viewer) Logic ---
 
+        let savedEditorPercent = 50;
+
         function applyMode(mode) {
             currentMode = mode;
             modeSwitcher.value = mode;
             if (mode === 'viewer') {
+                savedEditorPercent = parseFloat(editorContainer.style.flexBasis) || 50;
                 editor.readOnly = true;
                 document.body.classList.add('viewer-mode');
+                editorContainer.style.display = 'none';
+                resizer.style.display = 'none';
+                preview.style.flexBasis = '100%';
+                hideFindReplace();
+                closeSearchResults();
             } else {
                 editor.readOnly = false;
                 document.body.classList.remove('viewer-mode');
+                editorContainer.style.display = '';
+                resizer.style.display = '';
+                const rw = resizer.offsetWidth;
+                const cw = container.offsetWidth;
+                const rp = (rw / cw) * 100 || 0.5;
+                editorContainer.style.flexBasis = `${savedEditorPercent}%`;
+                preview.style.flexBasis = `${100 - savedEditorPercent - rp}%`;
             }
         }
 
@@ -2405,6 +2424,47 @@
 
         // Load Editor/Viewer mode from config file
         loadAndApplyMode();
+
+        // Drag & Drop: open .md/.txt files dropped onto the window
+        (async () => {
+            try {
+                const appWindow = getCurrentWindow();
+                await appWindow.onDragDropEvent(async (event) => {
+                    if (event.payload.type === 'drop') {
+                        const paths = event.payload.paths;
+                        if (!paths || paths.length === 0) return;
+                        firstAddedNoteIdDuringImport = null;
+                        setUnsavedChanges(true);
+                        for (const path of paths) {
+                            if (!/\.(md|txt)$/i.test(path)) continue;
+                            const name = path.split('\\').pop().split('/').pop();
+                            try {
+                                const content = await invoke('fn_read_file', { path });
+                                const existingNote = notes.find(n => n.name === name);
+                                if (existingNote) {
+                                    const copyName = name.replace(/(\.[^.]*)?$/i, ' (drop)$1');
+                                    const id = addNote(copyName, content);
+                                    if (firstAddedNoteIdDuringImport === null) firstAddedNoteIdDuringImport = id;
+                                } else {
+                                    const id = addNote(name, content);
+                                    if (firstAddedNoteIdDuringImport === null) firstAddedNoteIdDuringImport = id;
+                                }
+                            } catch (e) {
+                                console.error("Error reading dropped file:", path, e);
+                            }
+                        }
+                        if (firstAddedNoteIdDuringImport && findNoteById(firstAddedNoteIdDuringImport)) {
+                            switchTab(firstAddedNoteIdDuringImport);
+                        } else {
+                            renderUI();
+                            saveStateToLocalStorage();
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Drag-drop init error:", e);
+            }
+        })();
 
         // Initial UI rendering and preview update happens inside loadStateFromLocalStorage
         // or its fallback initial note creation.
