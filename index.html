@@ -6,234 +6,233 @@
     <title>Browser Markdown Editor - Fixes v2</title>
     <!-- Markdown parsing library -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Library for creating ZIP archives (used for export) -->
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js"></script>
     <style>
         /* --- CSS Variables for Theming --- */
         /* Defines colors and styles for the default light theme */
         :root {
-            --bg-color: #f4f4f4; /* Overall background */
-            --text-color: #333; /* Default text color */
-            --controls-bg: #e0e0e0; /* Background for top control bar */
-            --controls-border: #ccc; /* Border color for controls */
-            --button-bg: #f0f0f0; /* Button background */
-            --button-hover-bg: #ddd; /* Button background on hover */
-            --button-border: #aaa; /* Button border */
-            --sidebar-bg: #e8e8e8; /* Sidebar background */
-            --sidebar-header-bg: #d8d8d8; /* Sidebar header background */
-            --sidebar-border: #ccc; /* Sidebar border */
-            --sidebar-item-hover-bg: #f0f0f0; /* Background for sidebar note on hover */
-            --sidebar-item-active-bg: #fff; /* Background for active note in sidebar */
-            --sidebar-item-active-border: #4a90e2; /* Border color for active note (unused currently) */
-            --tab-bg: #e8e8e8; /* Background for inactive tabs */
-            --tab-active-bg: var(--bg-color); /* Background for the active tab (matches body) */
-            --tab-border: #ccc; /* Border color for tabs */
-            --tab-container-bg: #d0d0d0; /* Background for the tab container area */
-            --editor-bg: #fff; /* Background for the text editor area */
-            --preview-bg: #fff; /* Background for the markdown preview area */
-            --resizer-bg: #ccc; /* Background for the draggable resizer */
-            --resizer-border: #aaa; /* Border for the resizer */
-            --toolbar-bg: #f0f0f0; /* Background for the editor toolbar */
-            --toolbar-border: #ccc; /* Border for the editor toolbar */
-            --statusbar-bg: #f0f0f0; /* Background for the status bar below editor */
-            --statusbar-text: #555; /* Text color for the status bar */
-            --findbar-bg: #f8f8f8; /* Background for the find/replace bar */
-            --findbar-border: #ccc; /* Border for the find/replace bar */
-            --link-color: #007bff; /* Color for hyperlinks in preview */
-            --tag-bg: #f0f0f0; /* Background for tag buttons */
-            --tag-border: #ccc; /* Border for tag buttons */
-            --tag-active-bg: #4a90e2; /* Background for active/selected tag button */
-            --tag-active-color: #fff; /* Text color for active tag button */
-            --tag-active-border: #4a90e2; /* Border for active tag button */
-            --code-bg: #f0f0f0; /* Background for inline code snippets */
-            --pre-bg: #f0f0f0; /* Background for code blocks */
-            --blockquote-border: #ccc; /* Left border color for blockquotes */
-            --blockquote-color: #666; /* Text color for blockquotes */
-            --hr-color: #eee; /* Color for horizontal rules */
-            --search-result-bg: #fff; /* Background for individual search results */
-            --search-result-hover-bg: #f0f0f0; /* Background for search result on hover */
-            --search-result-border: #ddd; /* Border for search results */
-            --menu-bg: #f9f9f9; /* Background for dropdown menu */
-            --menu-border: #ccc; /* Border for dropdown menu */
-            --menu-hover-bg: #e0e0e0; /* Background for menu item on hover */
-            --placeholder-color: #888; /* Color for input placeholders */
-            --icon-color: #666; /* Default color for icons (like close buttons) */
-            --icon-hover-color: #000; /* Color for icons on hover */
-            --preview-bg-rgb: 255, 255, 255; /* RGB version for use in rgba() */
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --controls-bg: #ffffff;
+            --controls-border: #e2e8f0;
+            --button-bg: #f1f5f9;
+            --button-hover-bg: #e2e8f0;
+            --button-border: #cbd5e1;
+            --sidebar-bg: #ffffff;
+            --sidebar-header-bg: #f8fafc;
+            --sidebar-border: #e2e8f0;
+            --sidebar-item-hover-bg: #f1f5f9;
+            --sidebar-item-active-bg: #eff6ff;
+            --tab-bg: #f1f5f9;
+            --tab-active-bg: var(--bg-color);
+            --tab-border: #e2e8f0;
+            --tab-container-bg: #f1f5f9;
+            --editor-bg: #ffffff;
+            --preview-bg: #ffffff;
+            --resizer-bg: #e2e8f0;
+            --resizer-border: #cbd5e1;
+            --toolbar-bg: #f8fafc;
+            --toolbar-border: #e2e8f0;
+            --statusbar-bg: #f8fafc;
+            --statusbar-text: #64748b;
+            --findbar-bg: #f8fafc;
+            --findbar-border: #e2e8f0;
+            --link-color: #2563eb;
+            --tag-bg: #f1f5f9;
+            --tag-border: #e2e8f0;
+            --tag-active-bg: #2563eb;
+            --tag-active-color: #ffffff;
+            --tag-active-border: #2563eb;
+            --code-bg: #f1f5f9;
+            --pre-bg: #f8fafc;
+            --blockquote-border: #cbd5e1;
+            --blockquote-color: #64748b;
+            --hr-color: #e2e8f0;
+            --search-result-bg: #ffffff;
+            --search-result-hover-bg: #f1f5f9;
+            --search-result-border: #e2e8f0;
+            --menu-bg: #ffffff;
+            --menu-border: #e2e8f0;
+            --menu-hover-bg: #f1f5f9;
+            --placeholder-color: #94a3b8;
+            --icon-color: #94a3b8;
+            --icon-hover-color: #475569;
+            --preview-bg-rgb: 255, 255, 255;
+            --dark-mode-invert: 0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
         }
 
-        /* Defines overrides for the dark theme */
         body.dark-mode {
-            --bg-color: #2d2d2d;
-            --text-color: #ccc;
-            --controls-bg: #3a3a3a;
-            --controls-border: #555;
-            --button-bg: #4a4a4a;
-            --button-hover-bg: #5a5a5a;
-            --button-border: #666;
-            --sidebar-bg: #353535;
-            --sidebar-header-bg: #404040;
-            --sidebar-border: #555;
-            --sidebar-item-hover-bg: #454545;
-            --sidebar-item-active-bg: #505050;
-            --sidebar-item-active-border: #5a9ee2;
-            --tab-bg: #383838;
+            --bg-color: #0f172a;
+            --text-color: #e2e8f0;
+            --controls-bg: #1e293b;
+            --controls-border: #334155;
+            --button-bg: #334155;
+            --button-hover-bg: #475569;
+            --button-border: #475569;
+            --sidebar-bg: #1e293b;
+            --sidebar-header-bg: #1e293b;
+            --sidebar-border: #334155;
+            --sidebar-item-hover-bg: #334155;
+            --sidebar-item-active-bg: #1e3a5f;
+            --tab-bg: #1e293b;
             --tab-active-bg: var(--bg-color);
-            --tab-border: #555;
-            --tab-container-bg: #303030;
-            --editor-bg: #282828;
-            --preview-bg: #2b2b2b;
-            --resizer-bg: #555;
-            --resizer-border: #777;
-            --toolbar-bg: #3a3a3a;
-            --toolbar-border: #555;
-            --statusbar-bg: #3a3a3a;
-            --statusbar-text: #aaa;
-            --findbar-bg: #3f3f3f;
-            --findbar-border: #555;
-            --link-color: #5a9ee2;
-            --tag-bg: #4a4a4a;
-            --tag-border: #666;
-            --tag-active-bg: #5a9ee2;
-            --tag-active-color: #fff;
-            --tag-active-border: #5a9ee2;
-            --code-bg: #3a3a3a;
-            --pre-bg: #3a3a3a;
-            --blockquote-border: #555;
-            --blockquote-color: #aaa;
-            --hr-color: #444;
-            --search-result-bg: #353535;
-            --search-result-hover-bg: #454545;
-            --search-result-border: #555;
-            --menu-bg: #404040;
-            --menu-border: #555;
-            --menu-hover-bg: #505050;
-            --placeholder-color: #777;
-            --icon-color: #aaa;
-            --icon-hover-color: #eee;
-            --preview-bg-rgb: 43, 43, 43; /* RGB version for use in rgba() */
-            --dark-mode-invert: 1; /* Used to invert checkbox color in dark mode */
+            --tab-border: #334155;
+            --tab-container-bg: #1a2332;
+            --editor-bg: #0f172a;
+            --preview-bg: #0f172a;
+            --resizer-bg: #334155;
+            --resizer-border: #475569;
+            --toolbar-bg: #1e293b;
+            --toolbar-border: #334155;
+            --statusbar-bg: #1e293b;
+            --statusbar-text: #94a3b8;
+            --findbar-bg: #1e293b;
+            --findbar-border: #334155;
+            --link-color: #60a5fa;
+            --tag-bg: #334155;
+            --tag-border: #475569;
+            --tag-active-bg: #3b82f6;
+            --tag-active-color: #ffffff;
+            --tag-active-border: #3b82f6;
+            --code-bg: #1e293b;
+            --pre-bg: #1e293b;
+            --blockquote-border: #475569;
+            --blockquote-color: #94a3b8;
+            --hr-color: #334155;
+            --search-result-bg: #1e293b;
+            --search-result-hover-bg: #334155;
+            --search-result-border: #334155;
+            --menu-bg: #1e293b;
+            --menu-border: #334155;
+            --menu-hover-bg: #334155;
+            --placeholder-color: #64748b;
+            --icon-color: #64748b;
+            --icon-hover-color: #cbd5e1;
+            --preview-bg-rgb: 15, 23, 42;
+            --dark-mode-invert: 1;
         }
         /* --- End Theming --- */
 
         /* --- Basic Layout & Body --- */
-        html, body { height: 100%; margin: 0; overflow: hidden; /* Prevent scrolling on body */ }
-        body { font-family: sans-serif; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); position: relative; /* Needed for absolute positioning contexts */ }
+        html, body { height: 100%; margin: 0; overflow: hidden; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); position: relative; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
         /* --- Top Controls Bar --- */
-        .controls { padding: 8px 10px; background-color: var(--controls-bg); border-bottom: 1px solid var(--controls-border); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; /* Allow wrapping on small screens */ flex-shrink: 0; /* Prevent shrinking */ position: relative; z-index: 10; /* Ensure it's above main content */ }
-        .controls button, .controls select, .controls input[type="search"] { padding: 6px 10px; cursor: pointer; border: 1px solid var(--button-border); border-radius: 4px; background-color: var(--button-bg); color: var(--text-color); font-size: 13px; white-space: nowrap; /* Prevent button text wrapping */ }
-        .controls button:hover, .controls input[type="search"]:hover, .controls select:hover { background-color: var(--button-hover-bg); }
-        .controls label { margin-left: 3px; font-weight: bold; white-space: nowrap; font-size: 13px; }
-        #noteSwitcher { max-width: 150px; /* Limit width of dropdown */ }
-        #searchInput { flex-grow: 1; /* Allow search input to take available space */ min-width: 120px; max-width: 220px; background-color: var(--editor-bg); border: 1px solid var(--button-border); color: var(--text-color); }
+        .controls { padding: 10px 14px; background-color: var(--controls-bg); border-bottom: 1px solid var(--controls-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 10; box-shadow: var(--shadow-sm); }
+        .controls button, .controls select, .controls input[type="search"] { padding: 7px 12px; cursor: pointer; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-size: 13px; font-family: inherit; white-space: nowrap; transition: all 0.15s ease; }
+        .controls button:hover, .controls input[type="search"]:hover, .controls select:hover { background-color: var(--button-hover-bg); border-color: var(--resizer-border); }
+        .controls label { margin-left: 4px; font-weight: 500; white-space: nowrap; font-size: 13px; color: var(--statusbar-text); }
+        #noteSwitcher { max-width: 150px; }
+        #searchInput { flex-grow: 1; min-width: 120px; max-width: 220px; background-color: var(--editor-bg); }
         #searchInput::placeholder { color: var(--placeholder-color); }
 
         /* --- Menu Button and Dropdown --- */
         #menuContainer { position: relative; display: inline-block; /* Needed for absolute positioning of dropdown */ }
-        #menuToggleBtn { font-weight: bold; }
-        #menuDropdown { display: none; /* Hidden by default */ position: absolute; /* Position relative to menuContainer */ top: 100%; left: 0; background-color: var(--menu-bg); min-width: 190px; box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); z-index: 15; /* Above controls */ border: 1px solid var(--menu-border); border-radius: 4px; padding: 5px 0; }
-        #menuDropdown.visible { display: block; /* Show when class is added */ }
-        .menu-item { display: block; width: 100%; padding: 8px 12px; text-align: left; border: none; background: none; font-size: 14px; cursor: pointer; box-sizing: border-box; color: var(--text-color); }
+        #menuToggleBtn { font-weight: 600; }
+        #menuDropdown { display: none; position: absolute; top: 100%; left: 0; background-color: var(--menu-bg); min-width: 200px; box-shadow: var(--shadow-lg); z-index: 15; border: 1px solid var(--menu-border); border-radius: var(--radius-lg); padding: 6px 0; }
+        #menuDropdown.visible { display: block; }
+        .menu-item { display: block; width: 100%; padding: 9px 14px; text-align: left; border: none; background: none; font-size: 13px; font-family: inherit; cursor: pointer; box-sizing: border-box; color: var(--text-color); transition: background-color 0.1s ease; }
         .menu-item:hover { background-color: var(--menu-hover-bg); }
-        .menu-separator { height: 1px; background-color: var(--controls-border); margin: 5px 0; }
+        .menu-separator { height: 1px; background-color: var(--controls-border); margin: 6px 0; }
 
         /* --- Main Application Container (Sidebar + Main Content) --- */
         #appContainer { display: flex; flex-grow: 1; /* Take remaining vertical space */ overflow: hidden; /* Prevent content overflow */ position: relative; }
 
         /* --- Sidebar Styles --- */
-        #sidebar { width: 220px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; /* Prevent shrinking */ transition: width 0.3s ease, padding 0.3s ease, border 0.3s ease; overflow: hidden; position: relative; z-index: 5; /* Below controls but above main */ }
-        #sidebar.collapsed { width: 0; padding-left: 0; padding-right: 0; border-right: none; overflow: hidden; /* Hide content when fully collapsed */ }
+        #sidebar { width: 240px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; transition: width 0.25s ease, padding 0.25s ease, border 0.25s ease; overflow: hidden; position: relative; z-index: 5; }
+        #sidebar.collapsed { width: 0; padding-left: 0; padding-right: 0; border-right: none; overflow: hidden; }
 
-        /* Sidebar Toggle Button */
-        #sidebarToggleBtn { position: absolute; top: 5px; right: 5px; /* Position inside when open */ z-index: 10; padding: 2px 6px; font-size: 16px; line-height: 1; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: 3px; transition: background-color 0.2s ease, color 0.2s ease, opacity 0.3s ease, transform 0.3s ease; }
-        #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
+        #sidebarToggleBtn { position: absolute; top: 6px; right: 6px; z-index: 10; padding: 4px 8px; font-size: 15px; line-height: 1; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: all 0.2s ease; }
+        #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
 
-        /* Position toggle button correctly when the sidebar IS collapsed */
-        #sidebar.collapsed #sidebarToggleBtn { position: fixed; /* Position relative to viewport when collapsed */ left: 5px; top: 45px; /* Adjust based on controls height */ right: auto; background-color: var(--button-hover-bg); /* Make slightly distinct */ transform: translateX(0); z-index: 12; /* Ensure it's above potential overlaps */ }
+        #sidebar.collapsed #sidebarToggleBtn { position: fixed; left: 6px; top: 46px; right: auto; background-color: var(--button-hover-bg); transform: translateX(0); z-index: 12; }
 
         /* Sidebar Header (Title, Sort) */
-        .sidebar-header { padding: 10px 10px 5px 15px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
-        .sidebar-header h3 { margin: 0 0 5px 0; font-size: 14px; display: inline-block; }
-        #sortOrder { font-size: 11px; padding: 2px; border-radius: 3px; margin-left: 10px; vertical-align: middle; background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); }
+        .sidebar-header { padding: 14px 14px 8px 16px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
+        .sidebar-header h3 { margin: 0 0 6px 0; font-size: 14px; font-weight: 600; display: inline-block; }
+        #sortOrder { font-size: 11px; padding: 3px 6px; border-radius: var(--radius-sm); margin-left: 10px; vertical-align: middle; background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
 
-        /* Sidebar Tag Section */
-        #tagSection { padding: 5px 10px 5px 15px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; background-color: var(--controls-bg); /* Match controls background */ }
-        #tagSection h4 { margin: 0 0 5px 0; font-size: 12px; font-weight: bold; }
-        #tagList { max-height: 100px; /* Limit height and allow scroll */ overflow-y: auto; }
-        .tag-button { font-size: 11px; background-color: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 10px; padding: 2px 6px; margin-right: 4px; margin-bottom: 4px; cursor: pointer; display: inline-block; color: var(--text-color); }
+        #tagSection { padding: 10px 14px 8px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
+        #tagSection h4 { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: var(--statusbar-text); }
+        #tagList { max-height: 100px; overflow-y: auto; }
+        .tag-button { font-size: 11px; background-color: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 12px; padding: 3px 8px; margin-right: 4px; margin-bottom: 4px; cursor: pointer; display: inline-block; color: var(--text-color); transition: all 0.15s ease; }
         .tag-button:hover { background-color: var(--button-hover-bg); }
         .tag-button.active-tag { background-color: var(--tag-active-bg); color: var(--tag-active-color); border-color: var(--tag-active-border); }
         #clearTagFilterBtn { font-size: 10px; margin-left: 5px; background: none; border: none; color: var(--link-color); cursor: pointer; padding: 0; }
         #clearTagFilterBtn:hover { text-decoration: underline; }
 
-        /* Sidebar Note List */
-        #sidebarNoteList { list-style: none; padding: 0; margin: 0; overflow-y: auto; /* Allow scrolling for notes */ flex-grow: 1; /* Take remaining space in sidebar */ }
-        .sidebar-note-item { display: flex; align-items: center; padding: 8px 5px 8px 15px; cursor: pointer; border-bottom: 1px solid var(--hr-color); }
+        #sidebarNoteList { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; }
+        .sidebar-note-item { display: flex; align-items: center; padding: 9px 8px 9px 16px; cursor: pointer; border-bottom: 1px solid var(--hr-color); transition: background-color 0.1s ease; }
         .sidebar-note-item:hover { background-color: var(--sidebar-item-hover-bg); }
-        .note-name-sidebar { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; /* Show '...' if name is too long */ font-size: 14px; margin-right: 5px; }
-        .pin-note-btn { background: none; border: none; cursor: pointer; padding: 0 5px; font-size: 14px; opacity: 0.3; /* Dimmed by default */ flex-shrink: 0; color: var(--text-color); }
-        .sidebar-note-item:hover .pin-note-btn, /* Show pin on item hover */
-        .sidebar-note-item .pin-note-btn.pinned { opacity: 1; /* Show fully if pinned */ }
-        .sidebar-note-item.active-note-sidebar { background-color: var(--sidebar-item-active-bg); font-weight: bold; }
-        .sidebar-note-item.active-note-sidebar .note-name-sidebar { font-weight: bold; }
+        .note-name-sidebar { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 400; margin-right: 6px; }
+        .pin-note-btn { background: none; border: none; cursor: pointer; padding: 0 4px; font-size: 13px; opacity: 0; flex-shrink: 0; color: var(--icon-color); transition: opacity 0.15s ease; }
+        .sidebar-note-item:hover .pin-note-btn,
+        .sidebar-note-item .pin-note-btn.pinned { opacity: 1; }
+        .sidebar-note-item.active-note-sidebar { background-color: var(--sidebar-item-active-bg); font-weight: 500; border-left: 3px solid var(--tag-active-bg); padding-left: 13px; }
+        .sidebar-note-item.active-note-sidebar .note-name-sidebar { color: var(--link-color); }
         /* --- End Sidebar Styles --- */
 
         /* --- Main Content Area (Tabs, Editor, Preview) --- */
         #mainContent { flex-grow: 1; /* Take remaining horizontal space */ display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
 
         /* Tab Bar Styles */
-        #tabs { display: flex; align-items: flex-end; background-color: var(--tab-container-bg); padding: 5px 10px 0 5px; flex-wrap: nowrap; /* Prevent tabs wrapping */ overflow-x: auto; /* Allow horizontal scrolling for tabs */ border-bottom: 1px solid var(--tab-border); min-height: 36px; box-sizing: border-box; flex-shrink: 0; }
-        .tab { display: inline-flex; align-items: center; padding: 8px 10px 8px 15px; cursor: pointer; border: 1px solid var(--tab-border); border-bottom: none; background-color: var(--tab-bg); color: var(--text-color); margin-right: 4px; border-radius: 4px 4px 0 0; /* Rounded top corners */ white-space: nowrap; position: relative; max-width: 180px; font-size: 14px; line-height: 1; }
-        .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; margin-right: 5px; }
-        .close-tab-btn { font-family: sans-serif; font-size: 16px; font-weight: bold; color: var(--icon-color); padding: 0 4px; margin-left: auto; border-radius: 3px; line-height: 1; flex-shrink: 0; }
+        #tabs { display: flex; align-items: flex-end; background-color: var(--tab-container-bg); padding: 6px 10px 0 6px; flex-wrap: nowrap; overflow-x: auto; border-bottom: 1px solid var(--tab-border); min-height: 38px; box-sizing: border-box; flex-shrink: 0; }
+        .tab { display: inline-flex; align-items: center; padding: 7px 10px 7px 14px; cursor: pointer; border: 1px solid var(--tab-border); border-bottom: none; background-color: var(--tab-bg); color: var(--text-color); margin-right: 3px; border-radius: var(--radius-md) var(--radius-md) 0 0; white-space: nowrap; position: relative; max-width: 180px; font-size: 13px; line-height: 1; transition: background-color 0.15s ease; }
+        .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; margin-right: 6px; }
+        .close-tab-btn { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; color: var(--icon-color); padding: 0 4px; margin-left: auto; border-radius: var(--radius-sm); line-height: 1; flex-shrink: 0; transition: all 0.15s ease; }
         .close-tab-btn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
-        .tab.active { background-color: var(--tab-active-bg); border-bottom: 1px solid var(--tab-active-bg); /* Hide bottom border to merge with content */ z-index: 1; /* Bring active tab slightly forward */ position: relative; top: 1px; font-weight: bold; }
+        .tab.active { background-color: var(--tab-active-bg); border-bottom: 1px solid var(--tab-active-bg); z-index: 1; position: relative; top: 1px; font-weight: 500; }
         .tab:not(.active):hover { background-color: var(--button-hover-bg); }
-        #addTabBtn { font-size: 18px; font-weight: bold; padding: 4px 8px; margin-left: 5px; border: 1px dashed var(--button-border); border-radius: 4px; background-color: transparent; color: var(--icon-color); line-height: 1; align-self: center; margin-bottom: 3px; }
+        #addTabBtn { font-size: 18px; font-weight: 500; padding: 3px 8px; margin-left: 4px; border: 1px dashed var(--button-border); border-radius: var(--radius-md); background-color: transparent; color: var(--icon-color); line-height: 1; align-self: center; margin-bottom: 2px; transition: all 0.15s ease; }
         #addTabBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); border-style: solid; }
 
-        /* Editor Toolbar Styles */
-        #editorToolbar { padding: 5px 10px; background-color: var(--toolbar-bg); border-bottom: 1px solid var(--toolbar-border); flex-shrink: 0; user-select: none; /* Prevent text selection */ }
-        #editorToolbar button { font-family: Arial, sans-serif; font-weight: bold; font-size: 14px; padding: 3px 8px; margin-right: 5px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: 3px; min-width: 25px; text-align: center; vertical-align: middle; }
-        #editorToolbar button:hover { background-color: var(--button-hover-bg); border-color: #aaa; }
-        #editorToolbar .heading-btn { font-size: 12px; }
+        #editorToolbar { padding: 6px 12px; background-color: var(--toolbar-bg); border-bottom: 1px solid var(--toolbar-border); flex-shrink: 0; user-select: none; }
+        #editorToolbar button { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; padding: 4px 9px; margin-right: 4px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-sm); min-width: 28px; text-align: center; vertical-align: middle; transition: all 0.15s ease; }
+        #editorToolbar button:hover { background-color: var(--button-hover-bg); border-color: var(--resizer-border); }
+        #editorToolbar .heading-btn { font-size: 11px; font-weight: 600; }
 
-        /* Find/Replace Bar Styles */
-        #findReplaceBar { display: none; /* Hidden by default */ padding: 5px 10px; background-color: var(--findbar-bg); border-bottom: 1px solid var(--findbar-border); flex-shrink: 0; font-size: 12px; align-items: center; }
-        #findReplaceBar input[type="text"] { font-size: 12px; padding: 2px 4px; margin-right: 5px; border: 1px solid var(--button-border); border-radius: 3px; background-color: var(--editor-bg); color: var(--text-color); }
-        #findReplaceBar button { font-size: 11px; padding: 2px 6px; margin-left: 3px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: 3px; }
+        #findReplaceBar { display: none; padding: 6px 12px; background-color: var(--findbar-bg); border-bottom: 1px solid var(--findbar-border); flex-shrink: 0; font-size: 13px; align-items: center; gap: 6px; }
+        #findReplaceBar input[type="text"] { font-size: 13px; padding: 4px 8px; border: 1px solid var(--button-border); border-radius: var(--radius-sm); background-color: var(--editor-bg); color: var(--text-color); font-family: inherit; }
+        #findReplaceBar button { font-size: 12px; padding: 3px 8px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-sm); font-family: inherit; transition: all 0.1s ease; }
         #findReplaceBar button:hover { background-color: var(--button-hover-bg); }
-        #findReplaceCloseBtn { margin-left: auto; /* Push close button to the right */ font-weight: bold; color: var(--icon-color); }
+        #findReplaceCloseBtn { margin-left: auto; font-weight: 500; color: var(--icon-color); }
         #findReplaceCloseBtn:hover { color: var(--icon-hover-color); }
 
-        /* Editor/Preview Container Styles */
-        .container { display: flex; flex-grow: 1; /* Take remaining vertical space */ overflow: hidden; z-index: 0; background-color: var(--editor-bg); }
-        #editorContainer { display: flex; flex-direction: column; /* Stack editor and status bar */ flex-basis: 50%; /* Default width */ flex-shrink: 1; flex-grow: 1; min-width: 100px; /* Minimum resize width */ height: 100%; overflow: hidden; background-color: var(--editor-bg); }
-        #editor { flex-grow: 1; /* Take available space in editorContainer */ border: none; resize: none; /* Disable manual textarea resize */ font-family: monospace; background-color: var(--editor-bg); color: var(--text-color); outline: none; /* Remove focus outline */ height: auto; width: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.6; }
-        #statusBar { padding: 3px 10px; font-size: 11px; color: var(--statusbar-text); background-color: var(--statusbar-bg); border-top: 1px solid var(--controls-border); text-align: right; flex-shrink: 0; /* Prevent shrinking */ white-space: nowrap; }
-        #resizer { flex-basis: 5px; /* Width of the resizer */ flex-shrink: 0; flex-grow: 0; cursor: col-resize; /* Indicate draggability */ background-color: var(--resizer-bg); border-left: 1px solid var(--resizer-border); border-right: 1px solid var(--resizer-border); height: 100%; box-sizing: border-box; user-select: none; -moz-user-select: none; -webkit-user-select: none; -ms-user-select: none; /* Prevent text selection during drag */ }
-        #preview { flex-basis: 50%; /* Default width */ flex-shrink: 1; flex-grow: 1; background-color: var(--preview-bg); color: var(--text-color); min-width: 100px; /* Minimum resize width */ height: 100%; padding: 15px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.6; border-left: none; }
+        .container { display: flex; flex-grow: 1; overflow: hidden; z-index: 0; background-color: var(--editor-bg); }
+        #editorContainer { display: flex; flex-direction: column; flex-basis: 50%; flex-shrink: 1; flex-grow: 1; min-width: 100px; height: 100%; overflow: hidden; background-color: var(--editor-bg); }
+        #editor { flex-grow: 1; border: none; resize: none; font-family: 'JetBrains Mono', 'Fira Code', monospace; background-color: var(--editor-bg); color: var(--text-color); outline: none; height: auto; width: 100%; padding: 18px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; }
+        #statusBar { padding: 4px 14px; font-size: 11px; color: var(--statusbar-text); background-color: var(--statusbar-bg); border-top: 1px solid var(--controls-border); text-align: right; flex-shrink: 0; white-space: nowrap; }
+        #resizer { flex-basis: 4px; flex-shrink: 0; flex-grow: 0; cursor: col-resize; background-color: var(--resizer-bg); height: 100%; box-sizing: border-box; user-select: none; transition: background-color 0.15s ease; }
+        #resizer:hover { background-color: var(--tag-active-bg); }
+        #preview { flex-basis: 50%; flex-shrink: 1; flex-grow: 1; background-color: var(--preview-bg); color: var(--text-color); min-width: 100px; height: 100%; padding: 18px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; border-left: none; }
 
         /* --- Markdown Preview Specific Styles --- */
-        #preview h1, #preview h2, #preview h3, #preview h4, #preview h5, #preview h6 { margin-top: 1em; margin-bottom: 0.5em; border-bottom: 1px solid var(--hr-color); padding-bottom: 0.3em; }
-        #preview h1 { font-size: 2em; }
+        #preview { font-family: 'Inter', system-ui, sans-serif; }
+        #preview h1, #preview h2, #preview h3, #preview h4, #preview h5, #preview h6 { margin-top: 1.2em; margin-bottom: 0.5em; border-bottom: 1px solid var(--hr-color); padding-bottom: 0.3em; font-weight: 600; line-height: 1.3; }
+        #preview h1 { font-size: 1.8em; }
         #preview h2 { font-size: 1.5em; }
         #preview h3 { font-size: 1.25em; }
-        #preview code { background-color: var(--code-bg); padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; }
-        #preview pre { background-color: var(--pre-bg); padding: 10px; border-radius: 4px; overflow-x: auto; color: var(--text-color); }
-        #preview pre code { background-color: transparent; padding: 0; } /* Reset code style inside pre */
-        #preview blockquote { border-left: 4px solid var(--blockquote-border); padding-left: 10px; color: var(--blockquote-color); margin-left: 0; }
-        #preview ul, #preview ol { padding-left: 20px; }
-        /* GitHub-style Task Lists */
-        #preview .task-list-item { list-style-type: none; margin-left: -1.2em; /* Adjust positioning */ }
-        #preview .task-list-item input[type="checkbox"] { margin-right: 0.5em; filter: invert(var(--dark-mode-invert, 0)); /* Invert checkbox color in dark mode */ }
-        #preview table { border-collapse: collapse; width: auto; }
-        #preview th, #preview td { border: 1px solid var(--tab-border); padding: 6px 13px; }
-        #preview th { font-weight: bold; background-color: var(--button-bg); }
-        #preview img { max-width: 100%; background-color: white; /* Ensure images with transparency look ok */ }
-        #preview hr { border: 0; border-top: 1px solid var(--hr-color); margin: 1em 0; }
-        #preview a { color: var(--link-color); }
+        #preview code { background-color: var(--code-bg); padding: 0.2em 0.4em; border-radius: var(--radius-sm); font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+        #preview pre { background-color: var(--pre-bg); padding: 14px; border-radius: var(--radius-md); overflow-x: auto; border: 1px solid var(--controls-border); }
+        #preview pre code { background-color: transparent; padding: 0; border: none; }
+        #preview blockquote { border-left: 3px solid var(--blockquote-border); padding-left: 14px; color: var(--blockquote-color); margin: 1em 0; }
+        #preview ul, #preview ol { padding-left: 22px; }
+        #preview .task-list-item { list-style-type: none; margin-left: -1.4em; }
+        #preview .task-list-item input[type="checkbox"] { margin-right: 0.5em; filter: invert(var(--dark-mode-invert, 0)); }
+        #preview table { border-collapse: collapse; width: auto; margin: 1em 0; }
+        #preview th, #preview td { border: 1px solid var(--tab-border); padding: 8px 14px; }
+        #preview th { font-weight: 600; background-color: var(--button-bg); }
+        #preview img { max-width: 100%; border-radius: var(--radius-md); }
+        #preview hr { border: 0; border-top: 1px solid var(--hr-color); margin: 1.5em 0; }
+        #preview a { color: var(--link-color); text-decoration: none; }
+        #preview a:hover { text-decoration: underline; }
 
         /* Viewer Mode Styles */
         body.viewer-mode #editorContainer { display: none; }
@@ -242,20 +241,20 @@
         body.viewer-mode #findReplaceBar { display: none !important; }
         body.viewer-mode .container { display: block; }
         body.viewer-mode #preview { height: 100%; }
-        #modeIndicator { display: none; position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%); padding: 4px 16px; background: var(--tag-active-bg); color: #fff; border-radius: 12px; font-size: 12px; z-index: 999; opacity: 0.9; pointer-events: none; }
+        #modeIndicator { display: none; position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); padding: 5px 20px; background: var(--tag-active-bg); color: #fff; border-radius: 20px; font-size: 12px; font-weight: 500; z-index: 999; opacity: 0.85; pointer-events: none; box-shadow: var(--shadow-sm); }
         body.viewer-mode #modeIndicator { display: block; }
 
         /* --- Search Results Overlay --- */
-        #searchResults { position: absolute; top: 50px; /* Position below controls */ left: 50%; transform: translateX(-50%); /* Center horizontally */ width: 80%; max-width: 700px; max-height: 70vh; /* Limit height */ overflow-y: auto; background-color: rgba(var(--preview-bg-rgb, 255, 255, 255), 0.98); /* Slightly transparent background */ border: 1px solid var(--button-border); border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); padding: 20px; z-index: 1000; /* Ensure it's on top */ display: none; /* Hidden by default */ font-size: 14px; color: var(--text-color); }
-        #searchCloseBtn { position: absolute; top: 5px; right: 10px; font-size: 24px; font-weight: bold; color: var(--icon-color); cursor: pointer; border: none; background: none; padding: 0 5px; }
-        #searchCloseBtn:hover { color: var(--icon-hover-color); }
-        .search-result-item { margin-bottom: 15px; padding: 10px; border: 1px solid var(--search-result-border); border-radius: 4px; background-color: var(--search-result-bg); cursor: pointer; }
-        .search-result-item:hover { background-color: var(--search-result-hover-bg); border-color: var(--button-border); }
-        .search-result-name { font-weight: bold; margin-bottom: 5px; color: var(--text-color); }
-        .search-result-snippet { color: var(--text-color); line-height: 1.5; opacity: 0.8; }
-        .search-result-snippet mark { background-color: yellow; color: black; font-weight: bold; padding: 0.1em 0; border-radius: 2px; } /* Highlight search term */
-        #searchResults h3 { margin-top: 0; border-bottom: 1px solid var(--controls-border); padding-bottom: 5px; }
-        #searchResults p { margin-top: 10px; }
+        #searchResults { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 700px; max-height: 70vh; overflow-y: auto; background-color: rgba(var(--preview-bg-rgb), 0.98); border: 1px solid var(--controls-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 20px; z-index: 1000; display: none; font-size: 14px; color: var(--text-color); }
+        #searchCloseBtn { position: absolute; top: 8px; right: 12px; font-size: 22px; font-weight: 500; color: var(--icon-color); cursor: pointer; border: none; background: none; padding: 0 6px; border-radius: var(--radius-sm); transition: all 0.15s ease; }
+        #searchCloseBtn:hover { color: var(--icon-hover-color); background-color: var(--button-hover-bg); }
+        .search-result-item { margin-bottom: 12px; padding: 12px; border: 1px solid var(--search-result-border); border-radius: var(--radius-md); background-color: var(--search-result-bg); cursor: pointer; transition: all 0.15s ease; }
+        .search-result-item:hover { background-color: var(--search-result-hover-bg); border-color: var(--button-border); box-shadow: var(--shadow-sm); }
+        .search-result-name { font-weight: 600; margin-bottom: 6px; color: var(--text-color); font-size: 14px; }
+        .search-result-snippet { color: var(--text-color); line-height: 1.6; font-size: 13px; opacity: 0.8; }
+        .search-result-snippet mark { background-color: #fef08a; color: #1e293b; font-weight: 500; padding: 0.1em 0; border-radius: 2px; }
+        #searchResults h3 { margin-top: 0; border-bottom: 1px solid var(--controls-border); padding-bottom: 8px; font-weight: 600; }
+        #searchResults p { margin-top: 12px; }
     </style>
 </head>
 <body>
@@ -2424,6 +2423,11 @@
 
         // Load Editor/Viewer mode from config file
         loadAndApplyMode();
+
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
         // Drag & Drop: open .md/.txt files dropped onto the window
         (async () => {
