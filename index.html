@@ -122,7 +122,8 @@
 
         /* --- Icon Sizing (Lucide) --- */
         i[data-lucide] { width: 16px; height: 16px; display: block; }
-        button:has(> i[data-lucide]), .close-tab-btn, .pin-note-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+        /* Use :has([data-lucide]) (not > i) because Lucide replaces <i> with <svg> */
+        button:has([data-lucide]), .close-tab-btn, .pin-note-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
 
         /* --- Basic Layout & Body --- */
         html, body { height: 100%; margin: 0; overflow: hidden; }
@@ -153,11 +154,12 @@
         #sidebar { width: 240px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; transition: width 0.25s ease, padding 0.25s ease, border 0.25s ease; overflow: hidden; position: relative; z-index: 5; }
         #sidebar.collapsed { width: 0; padding-left: 0; padding-right: 0; border-right: none; overflow: hidden; }
 
-        #sidebarToggleBtn { position: absolute; top: 6px; right: 6px; z-index: 10; padding: 4px 8px; font-size: 15px; line-height: 1; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: all 0.2s ease; }
+        /* Sidebar toggle — absolute within #appContainer, z-index above sidebar */
+        #sidebarToggleBtn { position: absolute; left: 232px; top: 8px; z-index: 8; padding: 6px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: left 0.25s ease, box-shadow 0.25s ease; }
         #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
 
-        #sidebar.collapsed #sidebarToggleBtn { position: fixed; left: 8px; top: 58px; right: auto; background-color: var(--button-bg); transform: translateX(0); z-index: 12; box-shadow: var(--shadow-md); padding: 8px; border-radius: var(--radius-md); }
-        #sidebar.collapsed #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
+        #sidebar.collapsed ~ #sidebarToggleBtn { left: 8px; box-shadow: var(--shadow-md); padding: 8px; border-radius: var(--radius-md); }
+        #sidebar.collapsed ~ #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
 
         /* Sidebar Header (Title, Sort) */
         .sidebar-header { padding: 14px 14px 8px 16px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
@@ -304,8 +306,6 @@
     <div id="appContainer">
         <!-- Sidebar: Contains note list, sorting, tags -->
         <div id="sidebar">
-            <!-- Button to collapse/expand the sidebar -->
-            <button id="sidebarToggleBtn" title="Collapse Sidebar"><i data-lucide="chevron-left"></i></button>
             <!-- Sidebar Header: Title and sorting options -->
             <div class="sidebar-header">
                 <h3>Notes</h3>
@@ -326,6 +326,9 @@
             <!-- Note List: Displays notes, allows selection and pinning -->
             <ul id="sidebarNoteList"></ul> <!-- Note items will be rendered here -->
         </div>
+
+        <!-- Sidebar toggle (after sidebar in DOM so ~ sibling selector works) -->
+        <button id="sidebarToggleBtn" title="Collapse Sidebar"><i data-lucide="chevron-left"></i></button>
 
         <!-- Main Content Area: Contains Tabs, Editor Toolbar, Find/Replace, Editor, Preview -->
         <div id="mainContent">
