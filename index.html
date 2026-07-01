@@ -120,6 +120,10 @@
         }
         /* --- End Theming --- */
 
+        /* --- Icon Sizing (Lucide) --- */
+        i[data-lucide] { width: 16px; height: 16px; display: block; }
+        button:has(> i[data-lucide]), .close-tab-btn, .pin-note-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+
         /* --- Basic Layout & Body --- */
         html, body { height: 100%; margin: 0; overflow: hidden; }
         body { font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; background-color: var(--bg-color); color: var(--text-color); position: relative; font-size: 14px; line-height: 1.5; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
@@ -134,7 +138,7 @@
         #searchInput::placeholder { color: var(--placeholder-color); }
 
         /* --- Menu Button and Dropdown --- */
-        #menuContainer { position: relative; display: inline-block; /* Needed for absolute positioning of dropdown */ }
+        #menuContainer { position: relative; display: inline-block; z-index: 13; /* Needed for absolute positioning of dropdown */ }
         #menuToggleBtn { font-weight: 600; }
         #menuDropdown { display: none; position: absolute; top: 100%; left: 0; background-color: var(--menu-bg); min-width: 200px; box-shadow: var(--shadow-lg); z-index: 15; border: 1px solid var(--menu-border); border-radius: var(--radius-lg); padding: 6px 0; }
         #menuDropdown.visible { display: block; }
@@ -152,7 +156,8 @@
         #sidebarToggleBtn { position: absolute; top: 6px; right: 6px; z-index: 10; padding: 4px 8px; font-size: 15px; line-height: 1; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: all 0.2s ease; }
         #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
 
-        #sidebar.collapsed #sidebarToggleBtn { position: fixed; left: 6px; top: 46px; right: auto; background-color: var(--button-hover-bg); transform: translateX(0); z-index: 12; }
+        #sidebar.collapsed #sidebarToggleBtn { position: fixed; left: 8px; top: 58px; right: auto; background-color: var(--button-bg); transform: translateX(0); z-index: 12; box-shadow: var(--shadow-md); padding: 8px; border-radius: var(--radius-md); }
+        #sidebar.collapsed #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
 
         /* Sidebar Header (Title, Sort) */
         .sidebar-header { padding: 14px 14px 8px 16px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
@@ -263,7 +268,7 @@
     <div class="controls">
         <!-- File Menu Button and Dropdown -->
         <div id="menuContainer">
-            <button id="menuToggleBtn" title="File Menu"><i data-lucide="menu" style="width:18px;height:18px;vertical-align:middle"></i> Menu</button>
+            <button id="menuToggleBtn" title="File Menu"><i data-lucide="menu"></i> Menu</button>
             <div id="menuDropdown">
                 <button id="newNoteBtn" class="menu-item">Add New Note (Ctrl+N)</button>
                 <button id="renameBtn" class="menu-item">Rename Current Note</button>
@@ -292,7 +297,7 @@
             <option value="editor">Editor</option>
             <option value="viewer">Viewer</option>
         </select>
-        <button id="themeToggleBtn" title="Toggle Light/Dark Theme"><i data-lucide="palette" style="width:18px;height:18px;vertical-align:middle"></i></button>
+        <button id="themeToggleBtn" title="Toggle Light/Dark Theme"><i data-lucide="palette"></i></button>
     </div>
 
     <!-- Main Application Area: Contains Sidebar and Main Content Side-by-Side -->
@@ -300,7 +305,7 @@
         <!-- Sidebar: Contains note list, sorting, tags -->
         <div id="sidebar">
             <!-- Button to collapse/expand the sidebar -->
-            <button id="sidebarToggleBtn" title="Collapse Sidebar"><i data-lucide="chevron-left" style="width:16px;height:16px;display:block"></i></button>
+            <button id="sidebarToggleBtn" title="Collapse Sidebar"><i data-lucide="chevron-left"></i></button>
             <!-- Sidebar Header: Title and sorting options -->
             <div class="sidebar-header">
                 <h3>Notes</h3>
@@ -355,7 +360,7 @@
                 <button id="replaceBtn" title="Replace">Replace</button>
                 <button id="replaceAllBtn" title="Replace All">All</button>
                 <span id="findMatchCount"></span> <!-- Displays e.g., "1 / 5" -->
-                <button id="findReplaceCloseBtn" title="Close Find/Replace Bar (Esc)"><i data-lucide="x" style="width:16px;height:16px;display:block"></i></button>
+                <button id="findReplaceCloseBtn" title="Close Find/Replace Bar (Esc)"><i data-lucide="x"></i></button>
             </div>
             <!-- Container for Editor and Preview Panes with Resizer -->
             <div class="container">
@@ -378,7 +383,7 @@
 
     <!-- Search Results Overlay: Modal-like display for search results -->
     <div id="searchResults">
-        <button id="searchCloseBtn" title="Close Search Results"><i data-lucide="x" style="width:16px;height:16px;display:block"></i></button>
+        <button id="searchCloseBtn" title="Close Search Results"><i data-lucide="x"></i></button>
         <h3>Search Results</h3>
         <div id="searchResultsContent"></div> <!-- Search results will be rendered here -->
     </div>
@@ -692,9 +697,6 @@
                     closeBtnSpan.className = 'close-tab-btn';
                     const closeIcon = document.createElement('i');
                     closeIcon.setAttribute('data-lucide', 'x');
-                    closeIcon.style.width = '12px';
-                    closeIcon.style.height = '12px';
-                    closeIcon.style.display = 'block';
                     closeBtnSpan.appendChild(closeIcon);
                     closeBtnSpan.title = 'Close Note';
                     closeBtnSpan.dataset.id = note.id; // Store ID for closing
@@ -816,9 +818,6 @@
                     pinButton.className = 'pin-note-btn';
                     const pinIcon = document.createElement('i');
                     pinIcon.setAttribute('data-lucide', note.isPinned ? 'pin' : 'pin-off');
-                    pinIcon.style.width = '14px';
-                    pinIcon.style.height = '14px';
-                    pinIcon.style.display = 'block';
                     pinButton.appendChild(pinIcon);
                     pinButton.title = note.isPinned ? 'Unpin Note' : 'Pin Note'; // Dynamic title
                     if (note.isPinned) {
@@ -1470,7 +1469,7 @@
             // Update the button icon and title based on the new state
             const buttonToUpdate = document.getElementById('sidebarToggleBtn');
             if(buttonToUpdate) {
-                buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}" style="width:16px;height:16px;display:block"></i>`;
+                buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}"></i>`;
                 buttonToUpdate.title = isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons({}, buttonToUpdate);
@@ -2149,7 +2148,7 @@
                      // Update sidebar toggle button text/title based on loaded state
                       const buttonToUpdate = document.getElementById('sidebarToggleBtn');
                       if(buttonToUpdate){
-                          buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}" style="width:16px;height:16px;display:block"></i>`;
+                buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}"></i>`;
                           buttonToUpdate.title = isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
                           if (typeof lucide !== 'undefined') {
                               lucide.createIcons({}, buttonToUpdate);
