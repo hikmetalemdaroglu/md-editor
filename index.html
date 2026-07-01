@@ -275,7 +275,7 @@
     <!-- Top Control Bar: Contains main actions like menu, open, close, switch, search, theme -->
     <div class="controls">
         <!-- Sidebar Toggle -->
-        <button id="sidebarToggleBtn" title="Open Sidebar"><i data-lucide="chevron-right"></i></button>
+        <button id="sidebarToggleBtn" title="Open Sidebar"><i data-lucide="folder"></i></button>
         <!-- File Menu Button and Dropdown -->
         <div id="menuContainer">
             <button id="menuToggleBtn" title="File Menu">Menu</button>
@@ -1476,7 +1476,7 @@
             sidebar.classList.toggle('open', isSidebarOpen);
             const btn = document.getElementById('sidebarToggleBtn');
             if (btn) {
-                btn.innerHTML = `<i data-lucide="${isSidebarOpen ? 'chevron-left' : 'chevron-right'}"></i>`;
+                btn.innerHTML = `<i data-lucide="${isSidebarOpen ? 'folder-open' : 'folder'}"></i>`;
                 btn.title = isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar';
                 if (typeof lucide !== 'undefined') lucide.createIcons({}, btn);
             }
@@ -2150,7 +2150,7 @@
                       // Update sidebar toggle button text/title based on loaded state
                        const buttonToUpdate = document.getElementById('sidebarToggleBtn');
                        if(buttonToUpdate){
-                 buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarOpen ? 'chevron-left' : 'chevron-right'}"></i>`;
+                 buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarOpen ? 'folder-open' : 'folder'}"></i>`;
                            buttonToUpdate.title = isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar';
                            if (typeof lucide !== 'undefined') {
                                lucide.createIcons({}, buttonToUpdate);
