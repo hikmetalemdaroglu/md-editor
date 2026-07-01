@@ -148,23 +148,20 @@
         .menu-separator { height: 1px; background-color: var(--controls-border); margin: 6px 0; }
 
         /* --- Main Application Container (Sidebar + Main Content) --- */
-        #appContainer { display: flex; flex-grow: 1; /* Take remaining vertical space */ overflow: hidden; /* Prevent content overflow */ position: relative; }
+        #appContainer { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
 
-        /* --- Sidebar Styles --- */
-        #sidebar { width: 240px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; transition: width 0.25s ease, padding 0.25s ease, border 0.25s ease; overflow: hidden; position: relative; z-index: 5; }
-        #sidebar.collapsed { width: 0; padding-left: 0; padding-right: 0; border-right: none; overflow: hidden; }
+        /* --- Sidebar (Fixed Overlay, Slides from Left) --- */
+        #sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; z-index: 100; transform: translateX(-100%); transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: none; overflow: hidden; padding-top: 48px; }
+        #sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); }
 
-        /* Sidebar toggle — absolute within #appContainer, z-index above sidebar */
-        #sidebarToggleBtn { position: absolute; left: 232px; top: 8px; z-index: 8; padding: 6px 10px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: left 0.25s ease, box-shadow 0.25s ease; }
-        #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
+        /* Sidebar overlay backdrop */
+        #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 99; }
+        #sidebar.open ~ #sidebarOverlay { display: block; }
 
-        #sidebar.collapsed ~ #sidebarToggleBtn { left: 8px; box-shadow: var(--shadow-md); padding: 6px 10px; border-radius: var(--radius-md); }
-        #sidebar.collapsed ~ #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
-
-        /* Sidebar Header (Title, Sort) */
-        .sidebar-header { padding: 14px 14px 8px 16px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
-        .sidebar-header h3 { margin: 0 0 6px 0; font-size: 14px; font-weight: 600; display: inline-block; }
-        #sortOrder { font-size: 11px; padding: 3px 6px; border-radius: var(--radius-sm); margin-left: 10px; vertical-align: middle; background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
+        /* Sidebar Header */
+        .sidebar-header { padding: 14px 16px 8px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
+        .sidebar-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+        #sortOrder { font-size: 11px; padding: 3px 6px; border-radius: var(--radius-sm); margin-left: auto; background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
 
         #tagSection { padding: 10px 14px 8px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
         #tagSection h4 { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: var(--statusbar-text); }
@@ -184,6 +181,10 @@
         .sidebar-note-item .pin-note-btn.pinned { opacity: 1; }
         .sidebar-note-item.active-note-sidebar { background-color: var(--sidebar-item-active-bg); font-weight: 500; border-left: 3px solid var(--tag-active-bg); padding-left: 13px; }
         .sidebar-note-item.active-note-sidebar .note-name-sidebar { color: var(--link-color); }
+
+        /* Sidebar toggle button in controls */
+        #sidebarToggleBtn { display: inline-flex; align-items: center; justify-content: center; height: 30px; width: 30px; box-sizing: border-box; padding: 0; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--icon-color); cursor: pointer; transition: all 0.15s ease; }
+        #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
         /* --- End Sidebar Styles --- */
 
         /* --- Main Content Area (Tabs, Editor, Preview) --- */
@@ -268,6 +269,8 @@
 
     <!-- Top Control Bar: Contains main actions like menu, open, close, switch, search, theme -->
     <div class="controls">
+        <!-- Sidebar Toggle -->
+        <button id="sidebarToggleBtn" title="Open Sidebar"><i data-lucide="chevron-right"></i></button>
         <!-- File Menu Button and Dropdown -->
         <div id="menuContainer">
             <button id="menuToggleBtn" title="File Menu"><i data-lucide="menu"></i> Menu</button>
@@ -302,34 +305,29 @@
         <button id="themeToggleBtn" title="Toggle Light/Dark Theme"><i data-lucide="palette"></i></button>
     </div>
 
-    <!-- Main Application Area: Contains Sidebar and Main Content Side-by-Side -->
-    <div id="appContainer">
-        <!-- Sidebar: Contains note list, sorting, tags -->
-        <div id="sidebar">
-            <!-- Sidebar Header: Title and sorting options -->
-            <div class="sidebar-header">
-                <h3>Notes</h3>
-                <select id="sortOrder" title="Sort Notes">
-                    <option value="modified-desc">Modified (Newest)</option>
-                    <option value="modified-asc">Modified (Oldest)</option>
-                    <option value="created-desc">Created (Newest)</option>
-                    <option value="created-asc">Created (Oldest)</option>
-                    <option value="name-asc">Name (A-Z)</option>
-                    <option value="name-desc">Name (Z-A)</option>
-                </select>
-            </div>
-            <!-- Tag Section: Displays extracted tags and allows filtering -->
-            <div id="tagSection">
-                <h4>Tags <button id="clearTagFilterBtn" style="display: none;">(Clear)</button></h4>
-                <div id="tagList"></div> <!-- Tag buttons will be rendered here -->
-            </div>
-            <!-- Note List: Displays notes, allows selection and pinning -->
-            <ul id="sidebarNoteList"></ul> <!-- Note items will be rendered here -->
+    <!-- Sidebar (Fixed Overlay) -->
+    <div id="sidebar">
+        <div class="sidebar-header">
+            <h3>Notes</h3>
+            <select id="sortOrder" title="Sort Notes">
+                <option value="modified-desc">Modified (Newest)</option>
+                <option value="modified-asc">Modified (Oldest)</option>
+                <option value="created-desc">Created (Newest)</option>
+                <option value="created-asc">Created (Oldest)</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+            </select>
         </div>
+        <div id="tagSection">
+            <h4>Tags <button id="clearTagFilterBtn" style="display: none;">(Clear)</button></h4>
+            <div id="tagList"></div>
+        </div>
+        <ul id="sidebarNoteList"></ul>
+    </div>
+    <div id="sidebarOverlay"></div>
 
-        <!-- Sidebar toggle (after sidebar in DOM so ~ sibling selector works) -->
-        <button id="sidebarToggleBtn" title="Collapse Sidebar"><i data-lucide="chevron-left"></i></button>
-
+    <!-- Main Application Area -->
+    <div id="appContainer">
         <!-- Main Content Area: Contains Tabs, Editor Toolbar, Find/Replace, Editor, Preview -->
         <div id="mainContent">
             <!-- Tab Bar: Displays open notes as tabs -->
@@ -451,7 +449,7 @@
         let notes = []; // Array to store all note objects {id, name, content, isPinned, createdAt, updatedAt}
         let activeNoteId = null; // The ID of the currently displayed note in the editor
         let untitledCounter = 1; // Counter for naming new "Untitled" notes
-        let isSidebarCollapsed = false; // Tracks whether the sidebar is collapsed
+        let isSidebarOpen = false; // Tracks whether the sidebar is open
         let firstAddedNoteIdDuringImport = null; // Tracks the first note added during a multi-file/folder import to activate it
         let isResizing = false; // Flag to indicate if the editor/preview resizer is being dragged
         let unsavedChanges = false; // Flag to track if the current note has changes not saved to a file (used for beforeunload warning)
@@ -1466,23 +1464,16 @@
          * Toggles the collapsed state of the sidebar and updates the toggle button.
          */
         function toggleSidebar() {
-            isSidebarCollapsed = !isSidebarCollapsed; // Flip the state
-            sidebar.classList.toggle('collapsed', isSidebarCollapsed); // Add/remove 'collapsed' class
-
-            // Update the button icon and title based on the new state
-            const buttonToUpdate = document.getElementById('sidebarToggleBtn');
-            if(buttonToUpdate) {
-                buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}"></i>`;
-                buttonToUpdate.title = isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
-                if (typeof lucide !== 'undefined') {
-                    lucide.createIcons({}, buttonToUpdate);
-                }
-            } else {
-                console.error("Could not find sidebar toggle button to update text");
+            isSidebarOpen = !isSidebarOpen;
+            sidebar.classList.toggle('open', isSidebarOpen);
+            const btn = document.getElementById('sidebarToggleBtn');
+            if (btn) {
+                btn.innerHTML = `<i data-lucide="${isSidebarOpen ? 'chevron-left' : 'chevron-right'}"></i>`;
+                btn.title = isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar';
+                if (typeof lucide !== 'undefined') lucide.createIcons({}, btn);
             }
-
-            closeMenuDropdown(); // Close menu if open
-            saveStateToLocalStorage(); // Persist sidebar state
+            closeMenuDropdown();
+            saveStateToLocalStorage();
         }
 
         // --- Menu Dropdown ---
@@ -2092,7 +2083,7 @@
              const state = {
                  notes: notes, // The array of all note objects
                  activeNoteId: activeNoteId, // ID of the currently active note
-                 isSidebarCollapsed: isSidebarCollapsed, // Sidebar visibility state
+                 isSidebarOpen: isSidebarOpen, // Sidebar visibility state
                  untitledCounter: untitledCounter, // Counter for new notes
                  // Persist editor/preview pane split ratio
                  editorPanePercent: parseFloat(editorContainer.style.flexBasis) || 50,
@@ -2138,25 +2129,25 @@
 
                      // Restore other state variables, providing defaults if missing
                      activeNoteId = state.activeNoteId !== undefined ? state.activeNoteId : null;
-                     isSidebarCollapsed = state.isSidebarCollapsed || false;
-                     untitledCounter = state.untitledCounter || 1;
-                     currentSortOrder = state.currentSortOrder || 'modified-desc';
-                     sortOrderSelect.value = currentSortOrder; // Set dropdown value
-                     currentTheme = state.currentTheme || 'light';
-                     applyTheme(currentTheme); // Apply the loaded theme
+                      isSidebarOpen = state.isSidebarOpen ?? (state.isSidebarCollapsed !== undefined ? !state.isSidebarCollapsed : false);
+                      untitledCounter = state.untitledCounter || 1;
+                      currentSortOrder = state.currentSortOrder || 'modified-desc';
+                      sortOrderSelect.value = currentSortOrder; // Set dropdown value
+                      currentTheme = state.currentTheme || 'light';
+                      applyTheme(currentTheme); // Apply the loaded theme
 
-                     // Restore editor/preview pane split
-                     const editorPercent = state.editorPanePercent || 50;
-                     sidebar.classList.toggle('collapsed', isSidebarCollapsed); // Apply sidebar state
-                     // Update sidebar toggle button text/title based on loaded state
-                      const buttonToUpdate = document.getElementById('sidebarToggleBtn');
-                      if(buttonToUpdate){
-                buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarCollapsed ? 'chevron-right' : 'chevron-left'}"></i>`;
-                          buttonToUpdate.title = isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
-                          if (typeof lucide !== 'undefined') {
-                              lucide.createIcons({}, buttonToUpdate);
-                          }
-                      }
+                      // Restore editor/preview pane split
+                      const editorPercent = state.editorPanePercent || 50;
+                      sidebar.classList.toggle('open', isSidebarOpen); // Apply sidebar state
+                      // Update sidebar toggle button text/title based on loaded state
+                       const buttonToUpdate = document.getElementById('sidebarToggleBtn');
+                       if(buttonToUpdate){
+                 buttonToUpdate.innerHTML = `<i data-lucide="${isSidebarOpen ? 'chevron-left' : 'chevron-right'}"></i>`;
+                           buttonToUpdate.title = isSidebarOpen ? 'Close Sidebar' : 'Open Sidebar';
+                           if (typeof lucide !== 'undefined') {
+                               lucide.createIcons({}, buttonToUpdate);
+                           }
+                       }
                      const resizerWidthPercent = (resizer.offsetWidth / container.offsetWidth) * 100 || 0.5; // Estimate resizer width %
                      editorContainer.style.flexBasis = `${editorPercent}%`;
                      preview.style.flexBasis = `${100 - editorPercent - resizerWidthPercent}%`;
@@ -2503,14 +2494,7 @@
         // (applyTheme is called within loadStateFromLocalStorage)
 
          // Ensure sidebar button text/title matches the initial loaded state
-         // (This is also handled within loadStateFromLocalStorage now)
-         /*
-         const initialButton = document.getElementById('sidebarToggleBtn');
-         if (initialButton) {
-             initialButton.textContent = isSidebarCollapsed ? '>' : '<';
-             initialButton.title = isSidebarCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
-         }
-         */
+         if (typeof lucide !== 'undefined') { lucide.createIcons(); }
 
          console.log("Browser Markdown Editor Initialized.");
 
