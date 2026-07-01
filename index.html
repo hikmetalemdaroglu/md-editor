@@ -131,9 +131,10 @@
 
         /* --- Top Controls Bar --- */
         .controls { padding: 10px 14px; background-color: var(--controls-bg); border-bottom: 1px solid var(--controls-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 10; box-shadow: var(--shadow-sm); }
-        .controls button, .controls select, .controls input[type="search"] { padding: 6px 12px; cursor: pointer; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-size: 13px; font-family: inherit; white-space: nowrap; transition: all 0.15s ease; height: 30px; box-sizing: border-box; }
+        .controls button, .controls select, .controls input[type="search"] { padding: 6px 12px; cursor: pointer; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-size: 13px; font-family: inherit; white-space: nowrap; transition: all 0.15s ease; height: 30px; box-sizing: border-box; outline: none; }
+        .controls button:focus-visible, .controls select:focus-visible, .controls input:focus-visible { outline: 2px solid var(--tag-active-bg); outline-offset: 1px; }
         .controls button:hover, .controls input[type="search"]:hover, .controls select:hover { background-color: var(--button-hover-bg); border-color: var(--resizer-border); }
-        .controls label { margin-left: 4px; font-weight: 500; white-space: nowrap; font-size: 13px; color: var(--statusbar-text); }
+        .controls label { margin-left: 6px; font-weight: 500; white-space: nowrap; font-size: 12px; color: var(--statusbar-text); letter-spacing: 0.02em; }
         #noteSwitcher { max-width: 150px; }
         #searchInput { flex-grow: 1; min-width: 120px; max-width: 220px; background-color: var(--editor-bg); }
         #searchInput::placeholder { color: var(--placeholder-color); }
@@ -160,28 +161,29 @@
 
         /* Sidebar Header (w3schools style dark bar) */
         .sidebar-header { padding: 0; background-color: var(--tag-active-bg); flex-shrink: 0; display: flex; align-items: center; min-height: 48px; }
-        .sidebar-header h3 { margin: 0; padding: 0 16px; font-size: 15px; font-weight: 600; color: #fff; flex-grow: 1; display: flex; align-items: center; }
+        .sidebar-header h3 { margin: 0; padding: 0 16px; font-size: 15px; font-weight: 600; color: #fff; flex-grow: 1; display: flex; align-items: center; letter-spacing: 0.01em; }
         #sidebarCloseBtn { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: none; background: transparent; color: #fff; cursor: pointer; flex-shrink: 0; transition: background 0.15s ease; }
         #sidebarCloseBtn:hover { background: rgba(255,255,255,0.15); }
 
         /* Sidebar toolbar (sort) */
-        .sidebar-toolbar { padding: 10px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
-        .sidebar-toolbar #sortOrder { width: 100%; font-size: 12px; padding: 5px 8px; border-radius: var(--radius-sm); background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
+        .sidebar-toolbar { padding: 12px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
+        .sidebar-toolbar #sortOrder { width: 100%; font-size: 12px; padding: 6px 8px; border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; cursor: pointer; }
 
-        #tagSection { padding: 10px 14px 8px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
-        #tagSection h4 { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: var(--statusbar-text); }
-        #tagList { max-height: 100px; overflow-y: auto; }
+        #tagSection { padding: 12px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
+        #tagSection h4 { margin: 0 0 8px 0; font-size: 11px; font-weight: 600; color: var(--statusbar-text); text-transform: uppercase; letter-spacing: 0.05em; }
+        #tagList { max-height: 110px; overflow-y: auto; }
         .tag-button { font-size: 11px; background-color: var(--tag-bg); border: 1px solid var(--tag-border); border-radius: 12px; padding: 3px 8px; margin-right: 4px; margin-bottom: 4px; cursor: pointer; display: inline-block; color: var(--text-color); transition: all 0.15s ease; }
         .tag-button:hover { background-color: var(--button-hover-bg); }
         .tag-button.active-tag { background-color: var(--tag-active-bg); color: var(--tag-active-color); border-color: var(--tag-active-border); }
         #clearTagFilterBtn { font-size: 10px; margin-left: 5px; background: none; border: none; color: var(--link-color); cursor: pointer; padding: 0; }
         #clearTagFilterBtn:hover { text-decoration: underline; }
 
-        #sidebarNoteList { list-style: none; padding: 0; margin: 0; overflow-y: auto; flex-grow: 1; }
-        .sidebar-note-item { display: flex; align-items: center; padding: 9px 8px 9px 16px; cursor: pointer; border-bottom: 1px solid var(--hr-color); transition: background-color 0.1s ease; }
+        #sidebarNoteList { list-style: none; padding: 4px 0; margin: 0; overflow-y: auto; flex-grow: 1; }
+        .sidebar-note-item { display: flex; align-items: center; padding: 9px 8px 9px 16px; cursor: pointer; border-bottom: 1px solid var(--hr-color); transition: background-color 0.12s ease; }
         .sidebar-note-item:hover { background-color: var(--sidebar-item-hover-bg); }
         .note-name-sidebar { flex-grow: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; font-weight: 400; margin-right: 6px; }
-        .pin-note-btn { background: none; border: none; cursor: pointer; padding: 0 4px; font-size: 13px; opacity: 0; flex-shrink: 0; color: var(--icon-color); transition: opacity 0.15s ease; }
+        .pin-note-btn { background: none; border: none; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; opacity: 0; flex-shrink: 0; color: var(--icon-color); border-radius: var(--radius-sm); transition: opacity 0.15s ease, background-color 0.15s ease; }
+        .pin-note-btn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
         .sidebar-note-item:hover .pin-note-btn,
         .sidebar-note-item .pin-note-btn.pinned { opacity: 1; }
         .sidebar-note-item.active-note-sidebar { background-color: var(--sidebar-item-active-bg); font-weight: 500; border-left: 3px solid var(--tag-active-bg); padding-left: 13px; }
@@ -196,35 +198,35 @@
         #mainContent { flex-grow: 1; /* Take remaining horizontal space */ display: flex; flex-direction: column; overflow: hidden; position: relative; z-index: 1; }
 
         /* Tab Bar Styles */
-        #tabs { display: flex; align-items: flex-end; background-color: var(--tab-container-bg); padding: 6px 10px 0 6px; flex-wrap: nowrap; overflow-x: auto; border-bottom: 1px solid var(--tab-border); min-height: 38px; box-sizing: border-box; flex-shrink: 0; }
-        .tab { display: inline-flex; align-items: center; padding: 7px 10px 7px 14px; cursor: pointer; border: 1px solid var(--tab-border); border-bottom: none; background-color: var(--tab-bg); color: var(--text-color); margin-right: 3px; border-radius: var(--radius-md) var(--radius-md) 0 0; white-space: nowrap; position: relative; max-width: 180px; font-size: 13px; line-height: 1; transition: background-color 0.15s ease; }
+        #tabs { display: flex; align-items: flex-end; background-color: var(--tab-container-bg); padding: 6px 8px 0 6px; flex-wrap: nowrap; overflow-x: auto; border-bottom: 1px solid var(--tab-border); min-height: 38px; box-sizing: border-box; flex-shrink: 0; gap: 2px; }
+        .tab { display: inline-flex; align-items: center; padding: 7px 10px 7px 14px; cursor: pointer; border: 1px solid var(--tab-border); border-bottom: none; background-color: var(--tab-bg); color: var(--text-color); border-radius: var(--radius-md) var(--radius-md) 0 0; white-space: nowrap; position: relative; max-width: 180px; font-size: 13px; line-height: 1; transition: background-color 0.15s ease, box-shadow 0.15s ease; }
         .tab-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex-grow: 1; margin-right: 6px; }
-        .close-tab-btn { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 500; color: var(--icon-color); padding: 0 4px; margin-left: auto; border-radius: var(--radius-sm); line-height: 1; flex-shrink: 0; transition: all 0.15s ease; }
+        .close-tab-btn { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; color: var(--icon-color); margin-left: auto; border-radius: var(--radius-sm); flex-shrink: 0; transition: all 0.15s ease; }
         .close-tab-btn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
         .tab.active { background-color: var(--tab-active-bg); border-bottom: 1px solid var(--tab-active-bg); z-index: 1; position: relative; top: 1px; font-weight: 500; }
         .tab:not(.active):hover { background-color: var(--button-hover-bg); }
-        #addTabBtn { font-size: 18px; font-weight: 500; padding: 3px 8px; margin-left: 4px; border: 1px dashed var(--button-border); border-radius: var(--radius-md); background-color: transparent; color: var(--icon-color); line-height: 1; align-self: center; margin-bottom: 2px; transition: all 0.15s ease; }
+        #addTabBtn { display: inline-flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 500; width: 28px; height: 28px; margin-left: 4px; border: 1px dashed var(--button-border); border-radius: var(--radius-md); background-color: transparent; color: var(--icon-color); align-self: center; margin-bottom: 2px; transition: all 0.15s ease; }
         #addTabBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); border-style: solid; }
 
-        #editorToolbar { padding: 6px 12px; background-color: var(--toolbar-bg); border-bottom: 1px solid var(--toolbar-border); flex-shrink: 0; user-select: none; }
-        #editorToolbar button { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; padding: 4px 9px; margin-right: 4px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-sm); min-width: 28px; text-align: center; vertical-align: middle; transition: all 0.15s ease; }
+        #editorToolbar { padding: 8px 12px; background-color: var(--toolbar-bg); border-bottom: 1px solid var(--toolbar-border); flex-shrink: 0; user-select: none; }
+        #editorToolbar button { font-family: 'Inter', sans-serif; font-weight: 500; font-size: 13px; padding: 5px 10px; margin-right: 4px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-md); min-width: 30px; text-align: center; transition: all 0.15s ease; }
         #editorToolbar button:hover { background-color: var(--button-hover-bg); border-color: var(--resizer-border); }
         #editorToolbar .heading-btn { font-size: 11px; font-weight: 600; }
 
         #findReplaceBar { display: none; padding: 6px 12px; background-color: var(--findbar-bg); border-bottom: 1px solid var(--findbar-border); flex-shrink: 0; font-size: 13px; align-items: center; gap: 6px; }
-        #findReplaceBar input[type="text"] { font-size: 13px; padding: 4px 8px; border: 1px solid var(--button-border); border-radius: var(--radius-sm); background-color: var(--editor-bg); color: var(--text-color); font-family: inherit; }
-        #findReplaceBar button { font-size: 12px; padding: 3px 8px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-sm); font-family: inherit; transition: all 0.1s ease; }
+        #findReplaceBar input[type="text"] { font-size: 13px; padding: 4px 8px; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--editor-bg); color: var(--text-color); font-family: inherit; }
+        #findReplaceBar button { font-size: 12px; padding: 4px 9px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); border-radius: var(--radius-md); font-family: inherit; transition: all 0.1s ease; }
         #findReplaceBar button:hover { background-color: var(--button-hover-bg); }
         #findReplaceCloseBtn { margin-left: auto; font-weight: 500; color: var(--icon-color); }
         #findReplaceCloseBtn:hover { color: var(--icon-hover-color); }
 
         .container { display: flex; flex-grow: 1; overflow: hidden; z-index: 0; background-color: var(--editor-bg); }
         #editorContainer { display: flex; flex-direction: column; flex-basis: 50%; flex-shrink: 1; flex-grow: 1; min-width: 100px; height: 100%; overflow: hidden; background-color: var(--editor-bg); }
-        #editor { flex-grow: 1; border: none; resize: none; font-family: 'JetBrains Mono', 'Fira Code', monospace; background-color: var(--editor-bg); color: var(--text-color); outline: none; height: auto; width: 100%; padding: 18px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; }
-        #statusBar { padding: 4px 14px; font-size: 11px; color: var(--statusbar-text); background-color: var(--statusbar-bg); border-top: 1px solid var(--controls-border); text-align: right; flex-shrink: 0; white-space: nowrap; }
-        #resizer { flex-basis: 4px; flex-shrink: 0; flex-grow: 0; cursor: col-resize; background-color: var(--resizer-bg); height: 100%; box-sizing: border-box; user-select: none; transition: background-color 0.15s ease; }
+        #editor { flex-grow: 1; border: none; resize: none; font-family: 'JetBrains Mono', 'Fira Code', monospace; background-color: var(--editor-bg); color: var(--text-color); outline: none; height: auto; width: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; }
+        #statusBar { padding: 3px 14px; font-size: 11px; color: var(--statusbar-text); background-color: var(--statusbar-bg); border-top: 1px solid var(--controls-border); text-align: right; flex-shrink: 0; white-space: nowrap; letter-spacing: 0.02em; }
+        #resizer { flex-basis: 5px; flex-shrink: 0; flex-grow: 0; cursor: col-resize; background-color: var(--resizer-bg); height: 100%; box-sizing: border-box; user-select: none; transition: background-color 0.15s ease; }
         #resizer:hover { background-color: var(--tag-active-bg); }
-        #preview { flex-basis: 50%; flex-shrink: 1; flex-grow: 1; background-color: var(--preview-bg); color: var(--text-color); min-width: 100px; height: 100%; padding: 18px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; border-left: none; }
+        #preview { flex-basis: 50%; flex-shrink: 1; flex-grow: 1; background-color: var(--preview-bg); color: var(--text-color); min-width: 100px; height: 100%; padding: 20px; box-sizing: border-box; overflow-y: auto; font-size: 14px; line-height: 1.7; border-left: none; }
 
         /* --- Markdown Preview Specific Styles --- */
         #preview { font-family: 'Inter', system-ui, sans-serif; }
@@ -254,19 +256,20 @@
         body.viewer-mode #findReplaceBar { display: none !important; }
         body.viewer-mode .container { display: block; }
         body.viewer-mode #preview { height: 100%; }
-        #modeIndicator { display: none; position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); padding: 5px 20px; background: var(--tag-active-bg); color: #fff; border-radius: 20px; font-size: 12px; font-weight: 500; z-index: 999; opacity: 0.85; pointer-events: none; box-shadow: var(--shadow-sm); }
+        #modeIndicator { display: none; position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); padding: 6px 22px; background: var(--tag-active-bg); color: #fff; border-radius: 20px; font-size: 12px; font-weight: 500; z-index: 999; opacity: 0.9; pointer-events: none; box-shadow: var(--shadow-md); backdrop-filter: blur(4px); }
         body.viewer-mode #modeIndicator { display: block; }
 
         /* --- Search Results Overlay --- */
-        #searchResults { position: absolute; top: 54px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 700px; max-height: 70vh; overflow-y: auto; background-color: rgba(var(--preview-bg-rgb), 0.98); border: 1px solid var(--controls-border); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); padding: 20px; z-index: 1000; display: none; font-size: 14px; color: var(--text-color); }
-        #searchCloseBtn { position: absolute; top: 8px; right: 12px; font-size: 22px; font-weight: 500; color: var(--icon-color); cursor: pointer; border: none; background: none; padding: 0 6px; border-radius: var(--radius-sm); transition: all 0.15s ease; }
+        #searchResults { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 700px; max-height: 70vh; overflow-y: auto; background-color: var(--menu-bg); border: 1px solid var(--controls-border); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 24px; z-index: 1000; display: none; font-size: 14px; color: var(--text-color); }
+        #searchCloseBtn { position: absolute; top: 8px; right: 12px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; color: var(--icon-color); cursor: pointer; border: none; background: none; border-radius: var(--radius-sm); transition: all 0.15s ease; }
         #searchCloseBtn:hover { color: var(--icon-hover-color); background-color: var(--button-hover-bg); }
-        .search-result-item { margin-bottom: 12px; padding: 12px; border: 1px solid var(--search-result-border); border-radius: var(--radius-md); background-color: var(--search-result-bg); cursor: pointer; transition: all 0.15s ease; }
+        .search-result-item { margin-bottom: 10px; padding: 14px; border: 1px solid var(--search-result-border); border-radius: var(--radius-md); background-color: var(--search-result-bg); cursor: pointer; transition: all 0.15s ease; }
         .search-result-item:hover { background-color: var(--search-result-hover-bg); border-color: var(--button-border); box-shadow: var(--shadow-sm); }
-        .search-result-name { font-weight: 600; margin-bottom: 6px; color: var(--text-color); font-size: 14px; }
+        .search-result-item:last-child { margin-bottom: 0; }
+        .search-result-name { font-weight: 600; margin-bottom: 4px; color: var(--text-color); font-size: 14px; }
         .search-result-snippet { color: var(--text-color); line-height: 1.6; font-size: 13px; opacity: 0.8; }
         .search-result-snippet mark { background-color: #fef08a; color: #1e293b; font-weight: 500; padding: 0.1em 0; border-radius: 2px; }
-        #searchResults h3 { margin-top: 0; border-bottom: 1px solid var(--controls-border); padding-bottom: 8px; font-weight: 600; }
+        #searchResults h3 { margin: 0 0 16px 0; border-bottom: 1px solid var(--controls-border); padding-bottom: 12px; font-weight: 600; font-size: 15px; }
         #searchResults p { margin-top: 12px; }
     </style>
 </head>
