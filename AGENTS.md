@@ -85,7 +85,14 @@ npm run build           # Sadece frontend build
 
 ## Sıradaki (Planlanan)
 
-- [ ] Emoji ikonları Lucide SVG ile değiştir (data-lucide attribute)
+- [x] Emoji ikonları Lucide SVG ile değiştir (data-lucide attribute)
+  - menuToggleBtn: `☰` → `menu`
+  - themeToggleBtn: `🎨` → `palette`
+  - findReplaceCloseBtn: `×` → `x`
+  - searchCloseBtn: `×` → `x`
+  - sidebarToggleBtn: `<`/`>` → `chevron-left`/`chevron-right`
+  - close-tab-btn: `×` → `x` (dinamik)
+  - pin-note-btn: `📌` → `pin`/`pin-off` (dinamik, pinned durumuna göre)
 - [ ] Spacing, shadow, border-radius, transition detay iyileştirmeleri
 - [ ] Test ekle (frontend lint vs.)
 - [ ] GitHub'a push, release oluştur
