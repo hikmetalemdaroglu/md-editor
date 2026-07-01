@@ -120,10 +120,10 @@
         }
         /* --- End Theming --- */
 
-        /* --- Icon Sizing (Lucide) --- */
+        /* --- Icon & Button Standard Sizing --- */
         i[data-lucide] { width: 16px; height: 16px; display: block; }
-        /* Use :has([data-lucide]) (not > i) because Lucide replaces <i> with <svg> */
         button:has([data-lucide]), .close-tab-btn, .pin-note-btn { display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+        .controls button:has([data-lucide]), #sidebarToggleBtn { height: 30px; box-sizing: border-box; }
 
         /* --- Basic Layout & Body --- */
         html, body { height: 100%; margin: 0; overflow: hidden; }
@@ -131,7 +131,7 @@
 
         /* --- Top Controls Bar --- */
         .controls { padding: 10px 14px; background-color: var(--controls-bg); border-bottom: 1px solid var(--controls-border); display: flex; align-items: center; gap: 10px; flex-wrap: wrap; flex-shrink: 0; position: relative; z-index: 10; box-shadow: var(--shadow-sm); }
-        .controls button, .controls select, .controls input[type="search"] { padding: 7px 12px; cursor: pointer; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-size: 13px; font-family: inherit; white-space: nowrap; transition: all 0.15s ease; }
+        .controls button, .controls select, .controls input[type="search"] { padding: 6px 12px; cursor: pointer; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-size: 13px; font-family: inherit; white-space: nowrap; transition: all 0.15s ease; height: 30px; box-sizing: border-box; }
         .controls button:hover, .controls input[type="search"]:hover, .controls select:hover { background-color: var(--button-hover-bg); border-color: var(--resizer-border); }
         .controls label { margin-left: 4px; font-weight: 500; white-space: nowrap; font-size: 13px; color: var(--statusbar-text); }
         #noteSwitcher { max-width: 150px; }
@@ -155,10 +155,10 @@
         #sidebar.collapsed { width: 0; padding-left: 0; padding-right: 0; border-right: none; overflow: hidden; }
 
         /* Sidebar toggle — absolute within #appContainer, z-index above sidebar */
-        #sidebarToggleBtn { position: absolute; left: 232px; top: 8px; z-index: 8; padding: 6px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: left 0.25s ease, box-shadow 0.25s ease; }
+        #sidebarToggleBtn { position: absolute; left: 232px; top: 8px; z-index: 8; padding: 6px 10px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--icon-color); border-radius: var(--radius-sm); transition: left 0.25s ease, box-shadow 0.25s ease; }
         #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); color: var(--icon-hover-color); }
 
-        #sidebar.collapsed ~ #sidebarToggleBtn { left: 8px; box-shadow: var(--shadow-md); padding: 8px; border-radius: var(--radius-md); }
+        #sidebar.collapsed ~ #sidebarToggleBtn { left: 8px; box-shadow: var(--shadow-md); padding: 6px 10px; border-radius: var(--radius-md); }
         #sidebar.collapsed ~ #sidebarToggleBtn:hover { background-color: var(--button-hover-bg); }
 
         /* Sidebar Header (Title, Sort) */
