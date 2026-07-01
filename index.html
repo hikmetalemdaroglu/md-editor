@@ -151,17 +151,22 @@
         #appContainer { display: flex; flex-grow: 1; overflow: hidden; position: relative; }
 
         /* --- Sidebar (Fixed Overlay, Slides from Left) --- */
-        #sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background-color: var(--sidebar-bg); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; z-index: 100; transform: translateX(-100%); transition: transform 0.3s ease, box-shadow 0.3s ease; box-shadow: none; overflow: hidden; padding-top: 48px; }
-        #sidebar.open { transform: translateX(0); box-shadow: var(--shadow-lg); }
+        #sidebar { position: fixed; left: 0; top: 0; height: 100%; width: 260px; background-color: var(--sidebar-bg); display: flex; flex-direction: column; z-index: 100; transform: translateX(-100%); transition: transform 0.35s ease; overflow: hidden; }
+        #sidebar.open { transform: translateX(0); box-shadow: 0 0 20px rgba(0,0,0,0.2); }
 
         /* Sidebar overlay backdrop */
-        #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 99; }
+        #sidebarOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 99; cursor: pointer; }
         #sidebar.open ~ #sidebarOverlay { display: block; }
 
-        /* Sidebar Header */
-        .sidebar-header { padding: 14px 16px 8px; background-color: var(--sidebar-header-bg); border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; display: flex; align-items: center; gap: 8px; }
-        .sidebar-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
-        #sortOrder { font-size: 11px; padding: 3px 6px; border-radius: var(--radius-sm); margin-left: auto; background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
+        /* Sidebar Header (w3schools style dark bar) */
+        .sidebar-header { padding: 0; background-color: var(--tag-active-bg); flex-shrink: 0; display: flex; align-items: center; min-height: 48px; }
+        .sidebar-header h3 { margin: 0; padding: 0 16px; font-size: 15px; font-weight: 600; color: #fff; flex-grow: 1; display: flex; align-items: center; }
+        #sidebarCloseBtn { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: none; background: transparent; color: #fff; cursor: pointer; flex-shrink: 0; transition: background 0.15s ease; }
+        #sidebarCloseBtn:hover { background: rgba(255,255,255,0.15); }
+
+        /* Sidebar toolbar (sort) */
+        .sidebar-toolbar { padding: 10px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
+        .sidebar-toolbar #sortOrder { width: 100%; font-size: 12px; padding: 5px 8px; border-radius: var(--radius-sm); background-color: var(--button-bg); color: var(--text-color); border: 1px solid var(--button-border); font-family: inherit; }
 
         #tagSection { padding: 10px 14px 8px 16px; border-bottom: 1px solid var(--sidebar-border); flex-shrink: 0; }
         #tagSection h4 { margin: 0 0 6px 0; font-size: 12px; font-weight: 600; color: var(--statusbar-text); }
@@ -308,7 +313,10 @@
     <!-- Sidebar (Fixed Overlay) -->
     <div id="sidebar">
         <div class="sidebar-header">
-            <h3>Notes</h3>
+            <h3><i data-lucide="book-open" style="width:18px;height:18px;margin-right:4px;display:inline-block;vertical-align:middle"></i> Notes</h3>
+            <button id="sidebarCloseBtn" title="Close Sidebar"><i data-lucide="x"></i></button>
+        </div>
+        <div class="sidebar-toolbar">
             <select id="sortOrder" title="Sort Notes">
                 <option value="modified-desc">Modified (Newest)</option>
                 <option value="modified-asc">Modified (Oldest)</option>
@@ -2365,6 +2373,8 @@
 
         // Sidebar Events
         sidebarToggleBtn.addEventListener('click', toggleSidebar);
+        document.getElementById('sidebarOverlay').addEventListener('click', () => { if (isSidebarOpen) toggleSidebar(); });
+        document.getElementById('sidebarCloseBtn').addEventListener('click', () => { if (isSidebarOpen) toggleSidebar(); });
         sortOrderSelect.addEventListener('change', (e) => { // Sorting dropdown change
             currentSortOrder = e.target.value; // Update state variable
             saveStateToLocalStorage(); // Persist sort preference
