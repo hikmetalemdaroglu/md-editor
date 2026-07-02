@@ -1574,7 +1574,7 @@
             }
             try {
                 const configDir = await invoke('fn_get_config_dir');
-                const langPath = configDir + '\\' + langName;
+                const langPath = configDir + '/' + langName;
                 const content = await invoke('fn_read_file', { path: langPath });
                 content.split('\n').forEach(line => {
                     const idx = line.indexOf('=');
@@ -1628,24 +1628,23 @@
         });
 
         settingsLangBrowseBtn.addEventListener('click', async () => {
-            const previousValue = settingsLangInput.dataset.value;
             try {
                 const selected = await open({
                     filters: [{ name: 'Language Files', extensions: ['lang'] }],
                     multiple: false,
                 });
-                if (!selected) return; // cancelled — keep old value
-                const path = selected;
-                const name = path.split('\\').pop().split('/').pop();
+                if (!selected) return;
+                const filePath = selected;
+                const fileName = filePath.split('\\').pop().split('/').pop();
                 const configDir = await invoke('fn_get_config_dir');
-                const destPath = configDir + '\\' + name;
-                const content = await invoke('fn_read_file', { path });
+                const destPath = configDir + '/' + fileName;
+                const content = await invoke('fn_read_file', { path: filePath });
                 await invoke('fn_write_file', { path: destPath, content });
-                settingsLangInput.value = langDisplayName(name);
-                settingsLangInput.dataset.value = name;
+                settingsLangInput.value = langDisplayName(fileName);
+                settingsLangInput.dataset.value = fileName;
                 settingsLangInput.title = destPath;
             } catch (e) {
-                console.error("Error browsing lang file:", e);
+                await message('Error loading language file: ' + e, { kind: 'error' });
             }
         });
 
