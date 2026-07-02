@@ -85,9 +85,15 @@ fn fn_get_config_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
 fn fn_read_config(app: tauri::AppHandle) -> Result<String, String> {
     let config_path = fn_get_config_path(&app)?;
     if !config_path.exists() {
-        return Ok("[Settings]\nMode=viewer\n".to_string());
+        return Ok("[General]\nStartupType=viewer\nLanguage=english\n".to_string());
     }
     std::fs::read_to_string(&config_path).map_err(|e| e.to_string())
+}
+
+#[tauri::command]
+fn fn_get_config_dir(app: tauri::AppHandle) -> Result<String, String> {
+    let config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
+    Ok(config_dir.to_string_lossy().to_string())
 }
 
 #[tauri::command]
@@ -107,6 +113,7 @@ pub fn run() {
             fn_export_zip,
             fn_read_config,
             fn_write_config,
+            fn_get_config_dir,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
