@@ -284,7 +284,7 @@
         .settings-row label { font-size: 13px; color: var(--text-color); cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .settings-row input[type="radio"] { accent-color: var(--tag-active-bg); cursor: pointer; margin: 0; }
         .settings-lang-select { display: flex; gap: 8px; align-items: center; }
-        .settings-lang-select select { flex-grow: 1; padding: 6px 10px; font-size: 13px; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); cursor: pointer; font-family: inherit; }
+        .settings-lang-select input { flex-grow: 1; padding: 6px 10px; font-size: 13px; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); font-family: inherit; cursor: default; }
         .settings-lang-select button { padding: 6px 12px; font-size: 13px; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); cursor: pointer; font-family: inherit; transition: all 0.15s ease; white-space: nowrap; }
         .settings-lang-select button:hover { background-color: var(--button-hover-bg); }
         .settings-footer { padding: 12px 20px; border-top: 1px solid var(--controls-border); display: flex; justify-content: flex-end; gap: 8px; }
@@ -470,9 +470,7 @@
                 <div class="settings-group">
                     <h3>Language</h3>
                     <div class="settings-lang-select">
-                        <select id="settingsLangSelect">
-                            <option value="english">English</option>
-                        </select>
+                        <input id="settingsLangInput" type="text" readonly data-value="english" title="English (built-in)">
                         <button id="settingsLangBrowseBtn">Browse...</button>
                     </div>
                 </div>
@@ -1592,19 +1590,12 @@
             applyLanguage();
         }
 
-        async function loadLanguageList() {
-            const select = document.getElementById('settingsLangSelect');
-            select.innerHTML = '<option value="english">English</option>';
-            // Add Turkish if the lang file exists in config dir
-            try {
-                const configDir = await invoke('fn_get_config_dir');
-                const turkishPath = configDir + '\\md-editor-tr.lang';
-                await invoke('fn_read_file', { path: turkishPath });
-                const opt = document.createElement('option');
-                opt.value = 'md-editor-tr.lang';
-                opt.textContent = 'Türkçe';
-                select.appendChild(opt);
-            } catch (_) {}
+        function langDisplayName(storedName) {
+            if (storedName === 'english') return 'English';
+            const name = storedName.replace('.lang', '');
+            const code = name.replace('md-editor-', '');
+            const map = { tr: 'Türkçe', en: 'English', de: 'Deutsch', fr: 'Français', es: 'Español' };
+            return map[code] || code.toUpperCase();
         }
 
         // --- Settings Modal ---
@@ -1613,16 +1604,15 @@
         const settingsCloseBtn = document.getElementById('settingsCloseBtn');
         const settingsCancelBtn = document.getElementById('settingsCancelBtn');
         const settingsApplyBtn = document.getElementById('settingsApplyBtn');
-        const settingsLangSelect = document.getElementById('settingsLangSelect');
+        const settingsLangInput = document.getElementById('settingsLangInput');
         const settingsLangBrowseBtn = document.getElementById('settingsLangBrowseBtn');
 
         function openSettings() {
-            // Populate current values
             const startupRadios = document.querySelectorAll('input[name="startupMode"]');
             startupRadios.forEach(r => r.checked = (r.value === currentMode));
-            loadLanguageList().then(() => {
-                settingsLangSelect.value = currentLangName;
-            });
+            settingsLangInput.value = langDisplayName(currentLangName);
+            settingsLangInput.dataset.value = currentLangName;
+            settingsLangInput.title = currentLangName === 'english' ? 'English (built-in)' : currentLangName;
             settingsOverlay.classList.add('open');
             closeMenuDropdown();
         }
@@ -1638,26 +1628,22 @@
         });
 
         settingsLangBrowseBtn.addEventListener('click', async () => {
+            const previousValue = settingsLangInput.dataset.value;
             try {
                 const selected = await open({
                     filters: [{ name: 'Language Files', extensions: ['lang'] }],
                     multiple: false,
                 });
-                if (selected) {
-                    const path = selected;
-                    const name = path.split('\\').pop().split('/').pop();
-                    // Copy to config dir
-                    const configDir = await invoke('fn_get_config_dir');
-                    const destPath = configDir + '\\' + name;
-                    const content = await invoke('fn_read_file', { path });
-                    await invoke('fn_write_file', { path: destPath, content });
-                    // Add to select
-                    const opt = document.createElement('option');
-                    opt.value = name;
-                    opt.textContent = name.replace('.lang', '').replace('md-editor-', '');
-                    settingsLangSelect.appendChild(opt);
-                    settingsLangSelect.value = name;
-                }
+                if (!selected) return; // cancelled — keep old value
+                const path = selected;
+                const name = path.split('\\').pop().split('/').pop();
+                const configDir = await invoke('fn_get_config_dir');
+                const destPath = configDir + '\\' + name;
+                const content = await invoke('fn_read_file', { path });
+                await invoke('fn_write_file', { path: destPath, content });
+                settingsLangInput.value = langDisplayName(name);
+                settingsLangInput.dataset.value = name;
+                settingsLangInput.title = destPath;
             } catch (e) {
                 console.error("Error browsing lang file:", e);
             }
@@ -1666,10 +1652,9 @@
         settingsApplyBtn.addEventListener('click', async () => {
             const selectedStartup = document.querySelector('input[name="startupMode"]:checked');
             const startupType = selectedStartup ? selectedStartup.value : 'viewer';
-            const langVal = settingsLangSelect.value;
+            const langVal = settingsLangInput.dataset.value;
             await saveConfig(startupType, langVal);
             await loadLanguage(langVal);
-            // Apply startup mode immediately
             if (startupType !== currentMode) {
                 applyMode(startupType);
             }
