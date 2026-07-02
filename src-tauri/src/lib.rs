@@ -76,9 +76,8 @@ fn fn_export_zip(notes: Vec<ExportNote>, save_path: String) -> Result<(), String
 }
 
 fn fn_get_config_path(app: &tauri::AppHandle) -> Result<PathBuf, String> {
-    let config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
-    std::fs::create_dir_all(&config_dir).map_err(|e| e.to_string())?;
-    Ok(config_dir.join("md-editor.ini"))
+    let exe_dir = app.path().executable_dir().map_err(|e| e.to_string())?;
+    Ok(exe_dir.join("md-editor.ini"))
 }
 
 #[tauri::command]
@@ -92,8 +91,8 @@ fn fn_read_config(app: tauri::AppHandle) -> Result<String, String> {
 
 #[tauri::command]
 fn fn_get_config_dir(app: tauri::AppHandle) -> Result<String, String> {
-    let config_dir = app.path().app_config_dir().map_err(|e| e.to_string())?;
-    Ok(config_dir.to_string_lossy().to_string())
+    let exe_dir = app.path().executable_dir().map_err(|e| e.to_string())?;
+    Ok(exe_dir.to_string_lossy().to_string())
 }
 
 #[tauri::command]

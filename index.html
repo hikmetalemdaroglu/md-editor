@@ -2769,15 +2769,14 @@ status.chars=Karakterler
         // Load previous state from localStorage when the application starts
         loadStateFromLocalStorage();
 
-        // Load Editor/Viewer mode from config file
-        loadAndApplyMode();
-
-        // Ensure default lang file exists and load language
-        ensureDefaultLangFile().then(async () => {
+        // Load Editor/Viewer mode + init config dir + language
+        (async () => {
+            await loadAndApplyMode();
             const configContent = await readConfig();
             const langName = parseConfigLanguage(configContent);
+            await ensureDefaultLangFile();
             await loadLanguage(langName);
-        });
+        })();
 
         // Initialize Lucide icons
         if (typeof lucide !== 'undefined') {
