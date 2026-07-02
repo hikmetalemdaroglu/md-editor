@@ -249,6 +249,14 @@
         #preview a { color: var(--link-color); text-decoration: none; }
         #preview a:hover { text-decoration: underline; }
 
+        /* --- Mode Toggle Buttons --- */
+        .mode-toggle { display: inline-flex; gap: 0; flex-shrink: 0; }
+        .mode-btn { font-family: inherit; font-size: 13px; font-weight: 500; padding: 6px 14px; cursor: pointer; border: 1px solid var(--button-border); background-color: var(--button-bg); color: var(--text-color); transition: all 0.15s ease; height: 30px; box-sizing: border-box; }
+        .mode-btn:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+        .mode-btn:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; margin-left: -1px; }
+        .mode-btn:hover { background-color: var(--button-hover-bg); z-index: 1; position: relative; }
+        .mode-btn.active { background-color: var(--tag-active-bg); color: var(--tag-active-color); border-color: var(--tag-active-border); z-index: 2; position: relative; }
+
         /* Viewer Mode Styles */
         body.viewer-mode #editorContainer { display: none; }
         body.viewer-mode #resizer { display: none; }
@@ -305,11 +313,10 @@
         <label for="searchInput">Search:</label>
         <input type="search" id="searchInput" placeholder="Search content..."> <!-- Input for searching note content -->
         <button id="searchBtn">Go</button> <!-- Button to trigger search -->
-        <label for="modeSwitcher" style="margin-left: auto;">Mode:</label>
-        <select id="modeSwitcher" title="Switch Editor/Viewer Mode">
-            <option value="editor">Editor</option>
-            <option value="viewer">Viewer</option>
-        </select>
+        <div class="mode-toggle" style="margin-left: auto;">
+            <button id="viewerModeBtn" class="mode-btn active" value="viewer">Viewer</button>
+            <button id="editorModeBtn" class="mode-btn" value="editor">Edit</button>
+        </div>
         <button id="themeToggleBtn" title="Toggle Light/Dark Theme"><i data-lucide="palette"></i></button>
     </div>
 
@@ -452,7 +459,8 @@
         const replaceAllBtn = document.getElementById('replaceAllBtn'); // Replace all button
         const findMatchCount = document.getElementById('findMatchCount'); // Span to show match count (e.g., 1/5)
         const findReplaceCloseBtn = document.getElementById('findReplaceCloseBtn'); // Close button for find bar
-        const modeSwitcher = document.getElementById('modeSwitcher'); // Editor/Viewer mode dropdown
+        const viewerModeBtn = document.getElementById('viewerModeBtn'); // Viewer mode button
+        const editorModeBtn = document.getElementById('editorModeBtn'); // Editor mode button
 
 
         // --- State Variables ---
@@ -1327,7 +1335,8 @@
 
         function applyMode(mode) {
             currentMode = mode;
-            modeSwitcher.value = mode;
+            viewerModeBtn.classList.toggle('active', mode === 'viewer');
+            editorModeBtn.classList.toggle('active', mode === 'editor');
             if (mode === 'viewer') {
                 savedEditorPercent = parseFloat(editorContainer.style.flexBasis) || 50;
                 editor.readOnly = true;
@@ -2400,12 +2409,14 @@
         themeToggleBtnMenu.addEventListener('click', toggleTheme);
 
 
-        // Mode Switcher Event
-        modeSwitcher.addEventListener('change', () => {
-            const mode = modeSwitcher.value;
+        // Mode Switcher Events
+        function setMode(mode) {
+            if (mode === currentMode) return;
             applyMode(mode);
             saveModeToConfig(mode);
-        });
+        }
+        viewerModeBtn.addEventListener('click', () => setMode('viewer'));
+        editorModeBtn.addEventListener('click', () => setMode('editor'));
 
         // Theme Toggle Button (in controls)
         themeToggleBtn.addEventListener('click', toggleTheme);

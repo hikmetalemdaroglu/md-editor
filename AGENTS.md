@@ -96,6 +96,6 @@ npm run build           # Sadece frontend build
 - [x] İkon boyutları standardize edildi: CSS `i[data-lucide] { width:16px; height:16px }` ile tüm ikonlar aynı boyut
 - [x] Sidebar collapsed toggle pozisyonu düzeltildi: `top: 58px`, `box-shadow`, `z-index` ayarlandı
 - [x] Flexbox düzeni: butonlar `display:inline-flex` ile ikonları ortalar
-- [ ] Spacing, shadow, border-radius, transition detay iyileştirmeleri
+- [x] Spacing, shadow, border-radius, transition detay iyileştirmeleri
 - [ ] Test ekle (frontend lint vs.)
 - [ ] GitHub'a push, release oluştur
