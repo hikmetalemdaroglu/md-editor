@@ -293,6 +293,20 @@
         #settingsApplyBtn { background-color: var(--tag-active-bg); color: var(--tag-active-color); border-color: var(--tag-active-border); }
         #settingsApplyBtn:hover { opacity: 0.9; }
 
+        /* --- About Modal --- */
+        #aboutOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; }
+        #aboutOverlay.open { display: flex; }
+        #aboutModal { background-color: var(--menu-bg); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.2); width: 380px; max-width: 90vw; padding: 0; text-align: center; }
+        .about-body { padding: 32px 28px 24px; }
+        .about-body h2 { margin: 0 0 4px 0; font-size: 18px; font-weight: 700; }
+        .about-version { font-size: 13px; color: var(--statusbar-text); margin: 0 0 16px 0; }
+        .about-desc { font-size: 13px; color: var(--text-color); line-height: 1.6; margin: 0 0 16px 0; }
+        .about-link { display: inline-block; font-size: 13px; color: var(--link-color); text-decoration: none; padding: 6px 16px; border: 1px solid var(--button-border); border-radius: var(--radius-md); transition: all 0.15s ease; }
+        .about-link:hover { background-color: var(--button-hover-bg); }
+        .about-footer { padding: 12px 20px; border-top: 1px solid var(--controls-border); }
+        .about-footer button { padding: 7px 24px; font-size: 13px; border: 1px solid var(--button-border); border-radius: var(--radius-md); background-color: var(--button-bg); color: var(--text-color); cursor: pointer; font-family: inherit; font-weight: 500; transition: all 0.15s ease; }
+        .about-footer button:hover { background-color: var(--button-hover-bg); }
+
         /* --- Search Results Overlay --- */
         #searchResults { position: absolute; top: 56px; left: 50%; transform: translateX(-50%); width: 80%; max-width: 700px; max-height: 70vh; overflow-y: auto; background-color: var(--menu-bg); border: 1px solid var(--controls-border); border-radius: var(--radius-lg); box-shadow: 0 20px 60px rgba(0,0,0,0.15); padding: 24px; z-index: 1000; display: none; font-size: 14px; color: var(--text-color); }
         #searchCloseBtn { position: absolute; top: 8px; right: 12px; display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; color: var(--icon-color); cursor: pointer; border: none; background: none; border-radius: var(--radius-sm); transition: all 0.15s ease; }
@@ -331,6 +345,9 @@
                 <button id="themeToggleBtnMenu" class="menu-item" data-lang-key="menu.theme">Toggle Theme</button>
                 <div class="menu-separator"></div>
                 <button id="settingsBtn" class="menu-item" data-lang-key="menu.settings">Settings</button>
+                <div class="menu-separator"></div>
+                <button id="helpBtn" class="menu-item" data-lang-key="menu.help">Help</button>
+                <button id="aboutBtn" class="menu-item" data-lang-key="menu.about">About</button>
             </div>
         </div>
         <!-- Other Top Controls -->
@@ -463,6 +480,21 @@
             <div class="settings-footer">
                 <button id="settingsCancelBtn">Cancel</button>
                 <button id="settingsApplyBtn">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutOverlay">
+        <div id="aboutModal">
+            <div class="about-body">
+                <h2>Markdown Editor</h2>
+                <p class="about-version">Version 1.0.0</p>
+                <p class="about-desc">A desktop markdown editor built with Tauri v2 + Rust. Lightweight, fast, and portable.</p>
+                <a class="about-link" href="#" id="aboutWebsiteLink">http://www.riasoft.net</a>
+            </div>
+            <div class="about-footer">
+                <button id="aboutCloseBtn">Close</button>
             </div>
         </div>
     </div>
@@ -1475,6 +1507,8 @@
             'menu.find_replace': 'Find / Replace (Ctrl+F)',
             'menu.theme': 'Toggle Theme',
             'menu.settings': 'Settings',
+            'menu.help': 'Help',
+            'menu.about': 'About',
             'controls.open': 'Open File...',
             'controls.close': 'Close Current Note',
             'controls.switch': 'Switch:',
@@ -1640,6 +1674,36 @@
                 applyMode(startupType);
             }
             closeSettings();
+        });
+
+        // --- About Modal ---
+        const aboutOverlay = document.getElementById('aboutOverlay');
+        const aboutCloseBtn = document.getElementById('aboutCloseBtn');
+        const aboutWebsiteLink = document.getElementById('aboutWebsiteLink');
+
+        function openAbout() {
+            aboutOverlay.classList.add('open');
+            closeMenuDropdown();
+        }
+
+        function closeAbout() {
+            aboutOverlay.classList.remove('open');
+        }
+
+        aboutCloseBtn.addEventListener('click', closeAbout);
+        aboutOverlay.addEventListener('click', (e) => {
+            if (e.target === aboutOverlay) closeAbout();
+        });
+
+        aboutWebsiteLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            invoke('fn_open_url', { url: 'http://www.riasoft.net' });
+        });
+
+        // --- Help ---
+        document.getElementById('helpBtn').addEventListener('click', () => {
+            closeMenuDropdown();
+            invoke('fn_open_url', { url: 'https://riasoft.net/help/md-editor' });
         });
 
         // --- Search Functionality ---
@@ -2662,6 +2726,7 @@
         importFolderBtn.addEventListener('click', importFolder);
         themeToggleBtnMenu.addEventListener('click', toggleTheme);
         document.getElementById('settingsBtn').addEventListener('click', openSettings);
+        document.getElementById('aboutBtn').addEventListener('click', openAbout);
 
 
         // Mode Switcher Events

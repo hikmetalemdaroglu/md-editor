@@ -101,6 +101,11 @@ fn fn_write_config(app: tauri::AppHandle, content: String) -> Result<(), String>
     std::fs::write(&config_path, &content).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn fn_open_url(url: String) -> Result<(), String> {
+    webbrowser::open(&url).map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -113,6 +118,7 @@ pub fn run() {
             fn_read_config,
             fn_write_config,
             fn_get_config_dir,
+            fn_open_url,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
