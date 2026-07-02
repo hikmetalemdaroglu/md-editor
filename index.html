@@ -1558,55 +1558,6 @@
             applyLanguage();
         }
 
-        async function ensureDefaultLangFile() {
-            try {
-                const configDir = await invoke('fn_get_config_dir');
-                const langPath = configDir + '\\md-editor-tr.lang';
-                try {
-                    await invoke('fn_read_file', { path: langPath });
-                } catch (_) {
-                    const turkish = `app.title=Markdown Düzenleyici
-menu.btn=Menü
-menu.new_note=Yeni Not Ekle (Ctrl+N)
-menu.rename=Notu Yeniden Adlandır
-menu.save=Notu Kaydet (Ctrl+S)
-menu.export_zip=Tüm Notları Dışa Aktar (.zip)
-menu.import_files=Dosya İçe Aktar (.md)...
-menu.import_folder=Klasör İçe Aktar...
-menu.find_replace=Bul / Değiştir (Ctrl+F)
-menu.theme=Temayı Değiştir
-menu.settings=Ayarlar
-controls.open=Dosya Aç...
-controls.close=Notu Kapat
-controls.switch=Geçiş:
-controls.search=Ara:
-controls.go=Git
-sidebar.title=Notlar
-sidebar.sort=Sırala...
-sidebar.tags=Etiketler
-sidebar.clear=Temizle
-settings.title=Ayarlar
-settings.startup_mode=Başlangıç Modu
-settings.language=Dil
-settings.browse=Gözat...
-settings.cancel=İptal
-settings.apply=Uygula
-viewer.badge=Görüntüleme
-viewer.btn=Görüntüle
-editor.btn=Düzenle
-search.title=Arama Sonuçları
-search.placeholder=İçerik ara...
-search.no_term=Lütfen bir arama terimi girin.
-status.words=Kelimeler
-status.chars=Karakterler
-`;
-                    await invoke('fn_write_file', { path: langPath, content: turkish });
-                }
-            } catch (e) {
-                console.error("Error ensuring default lang file:", e);
-            }
-        }
-
         async function loadLanguageList() {
             const select = document.getElementById('settingsLangSelect');
             select.innerHTML = '<option value="english">English</option>';
@@ -2774,7 +2725,6 @@ status.chars=Karakterler
             await loadAndApplyMode();
             const configContent = await readConfig();
             const langName = parseConfigLanguage(configContent);
-            await ensureDefaultLangFile();
             await loadLanguage(langName);
         })();
 
